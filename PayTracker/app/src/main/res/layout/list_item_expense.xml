@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/list_item_card_margin"
+        android:background="@drawable/ic_card_background"
+        android:orientation="horizontal"
+        android:padding="@dimen/list_item_internal_margin_small"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="left">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/expense_by_name"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/list_item_internal_margin_small"
+                    android:textSize="@dimen/list_item_title_size"
+                    android:textColor="@color/text_color_dark"
+                    android:text="Name" />
+
+                <TextView
+                    android:id="@+id/expense_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/list_item_internal_margin_small"
+                    android:textSize="@dimen/list_item_title_size"
+                    android:textColor="@color/text_color_dark"
+                    android:text="5000"/>
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/expense_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/list_item_internal_margin_small"
+                android:textSize="@dimen/list_item_desc_size"
+                android:textColor="@color/text_color_light"
+                android:text="Cab to the mall"/>
+
+            <TextView
+                android:id="@+id/expense_for_names"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/list_item_internal_margin_small"
+                android:textSize="@dimen/list_item_desc_size"
+                android:textColor="@color/text_color_light"
+                android:text="For Rahul, Prachi, Shweta, Pratima, Vinnie and 6 more"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+            <Button
+                android:id="@+id/expense_edit_btn"
+                android:layout_width="@dimen/list_item_button_width"
+                android:layout_height="@dimen/list_item_button_height"
+                android:text="@string/label_edit"/>
+            <Button
+                android:id="@+id/expense_delete_btn"
+                android:layout_width="@dimen/list_item_button_width"
+                android:layout_height="@dimen/list_item_button_height"
+                android:text="@string/label_delete"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

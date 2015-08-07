@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.creativecapsule.paytracker" >
+
+    <application
+        android:name=".Utility.PayTrackerApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".UI.Activities.HomeActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".UI.Activities.BuddiesActivity"
+            android:label="@string/title_activity_buddies" >
+        </activity>
+        <activity
+            android:name=".UI.Activities.OutingDetailsActivity"
+            android:label="@string/title_activity_outing_details" >
+        </activity>
+        <activity
+            android:name=".UI.Activities.ExpenseActivity"
+            android:label="@string/title_activity_new_expense" >
+        </activity>
+        <activity
+            android:name=".UI.Activities.OutStandingsActivity"
+            android:label="@string/title_activity_outstandings" >
+        </activity>
+    </application>
+
+</manifest>

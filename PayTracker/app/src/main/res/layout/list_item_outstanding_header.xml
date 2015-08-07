@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white_background_color">
+<TextView
+    android:id="@+id/outstanding_by_label"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/global_margin_20"
+    android:textSize="@dimen/list_item_title_size"
+    android:textColor="@color/text_color_dark"
+    android:text="Rahul"/>
+</LinearLayout>

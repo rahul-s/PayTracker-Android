@@ -1,0 +1,21 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OustandingsActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/placeholder_no_outstandings"
+        android:layout_margin="@dimen/global_margin_10"
+        android:textColor="@color/text_color_light"/>
+
+    <com.creativecapsule.paytracker.UI.CustomViews.SectionHeaderListView.SectionHeaderListView
+        android:id="@+id/list_view_outstandings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
+    </com.creativecapsule.paytracker.UI.CustomViews.SectionHeaderListView.SectionHeaderListView>
+</RelativeLayout>

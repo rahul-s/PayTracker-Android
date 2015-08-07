@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="transparent_color">#00000000</color>
+    <color name="app_background_color">#DDFFDD</color>
+    <color name="app_title_bar_color">#6FC317</color>
+    <color name="white_background_color">#FFFFFF</color>
+    <color name="button_bg_color">#6FC317</color>
+    <color name="bottom_bar_bg_color">#AA6FC317</color>
+    <color name="button_text_color">#FFFFFF</color>
+    <color name="divider_line_color">#AACECECE</color>
+    <color name="text_color_dark">#99000000</color>
+    <color name="text_color_light">#44000000</color>
+
+</resources>

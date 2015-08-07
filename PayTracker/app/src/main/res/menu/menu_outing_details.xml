@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.creativecapsule.paytracker.UI.Activities.OutingDetailsActivity">
+    <item android:id="@+id/action_add" android:title="@string/action_add"
+        android:orderInCategory="100" app:showAsAction="always" />
+    <item android:id="@+id/action_show_expenses" android:title="@string/action_view_expenses"
+        android:orderInCategory="101" />
+    <item android:id="@+id/action_show_outstandings" android:title="@string/action_view_outstandings"
+        android:orderInCategory="102" />
+</menu>
