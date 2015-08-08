@@ -11,10 +11,11 @@ import com.creativecapsule.paytracker.Repository.OutingRepository;
 import com.creativecapsule.paytracker.Repository.PersonRepository;
 import com.creativecapsule.paytracker.Utility.PayTrackerApplication;
 import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,16 +87,14 @@ public class ParseDataManager {
         query.whereEqualTo(PARSE_KEY_PERSON_SIGNED_UP, true);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<ParseObject> list, com.parse.ParseException e) {
+            public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
                     if (list != null && list.size() > 0) {
                         callbackListener.completed(true);
-                    }
-                    else {
+                    } else {
                         callbackListener.completed(false);
                     }
-                }
-                else {
+                } else {
                     callbackListener.completed(false);
                 }
             }
@@ -115,7 +114,7 @@ public class ParseDataManager {
         query.whereEqualTo(PARSE_KEY_PERSON_EMAIL, email);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
-            public void done(List<ParseObject> list, com.parse.ParseException e) {
+            public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
                     if (list != null && list.size() > 0) {
                         //Person found with matching email.
@@ -124,16 +123,34 @@ public class ParseDataManager {
                         if (signedUp) {
                             //The person has already signed up.
                             callbackListener.completed(false);
-                        }
-                        else {
+                        } else {
                             //The existing person has not signed up.
-                            signUpPerson(person.getObjectId(), name, password, callbackListener);
+                            signUpPerson(person, name, password, callbackListener);
                         }
-                    }
-                    else {
+                    } else {
                         //Email not matching any existing person.
                         confirmRegister(email, password, name, callbackListener);
                     }
+                } else {
+                    callbackListener.completed(false);
+                }
+            }
+        });
+    }
+
+    // This method creates an entry in the parse with given details. Invoke this when user is not registered.
+    private void confirmRegister(String email, String password, String name, final ParseDataManagerListener callbackListener) {
+        final Person person = new Person(name, email, "");
+        final ParseObject parseObject = getParseObject(person);
+        parseObject.put(PARSE_KEY_PERSON_PASSWORD, password);
+        parseObject.put(PARSE_KEY_PERSON_SIGNED_UP, true);
+        parseObject.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    person.setParseId(parseObject.getObjectId());
+                    savePerson(person);
+                    callbackListener.completed(true);
                 }
                 else {
                     callbackListener.completed(false);
@@ -142,14 +159,23 @@ public class ParseDataManager {
         });
     }
 
-    // This method creates an entry in the parse with given details. Invoke this when user is not registered.
-    private void confirmRegister(String email, String password, String name, ParseDataManagerListener callbackListener) {
-        ParseObject newPerson = new ParseObject(PARSE_TABLE_PERSON);
-    }
-
     // This method signs up an existing user. Invoke this method when email exists but nut signed up.
-    private void signUpPerson(String personId, String name, String password, ParseDataManagerListener callbackListener) {
-
+    private void signUpPerson(final ParseObject parsePerson, String name, String password, final ParseDataManagerListener callbackListener) {
+        parsePerson.put(PARSE_KEY_PERSON_PASSWORD, password);
+        parsePerson.put(PARSE_KEY_PERSON_SIGNED_UP, true);
+        parsePerson.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Person person = getPerson(parsePerson);
+                    savePerson(person);
+                    callbackListener.completed(true);
+                }
+                else {
+                    callbackListener.completed(false);
+                }
+            }
+        });
     }
 
     /**
@@ -159,8 +185,28 @@ public class ParseDataManager {
      * @param password
      * @param callbackListener
      */
-    public void loginPerson(String email, String password, ParseDataManagerListener callbackListener) {
-
+    public void loginPerson(String email, String password, final ParseDataManagerListener callbackListener) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_PERSON);
+        query.whereEqualTo(PARSE_KEY_PERSON_EMAIL, email);
+        query.whereEqualTo(PARSE_KEY_PERSON_PASSWORD, password);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    if (list != null && list.size() > 0) {
+                        //Person found with matching email.
+                        ParseObject parsePerson = list.get(0);
+                        Person person = getPerson(parsePerson);
+                        savePerson(person);
+                        callbackListener.completed(true);
+                    } else {
+                        callbackListener.completed(false);
+                    }
+                } else {
+                    callbackListener.completed(false);
+                }
+            }
+        });
     }
     //endregion
 
@@ -201,6 +247,19 @@ public class ParseDataManager {
         ArrayList<ParseObject> parseObjects = new ArrayList<>();
         // TODO: populate the list
         return parseObjects;
+    }
+
+    private Person getPerson(ParseObject parseObject) {
+        if (parseObject.getClassName().equals(PARSE_TABLE_PERSON)) {
+            String name = parseObject.getString(PARSE_KEY_PERSON_NAME);
+            String email = parseObject.getString(PARSE_KEY_PERSON_EMAIL);
+            Person person = new Person(name, email, "");
+            person.setParseId(parseObject.getObjectId());
+            return person;
+        }
+        else {
+            return null;
+        }
     }
     //endregion
 
