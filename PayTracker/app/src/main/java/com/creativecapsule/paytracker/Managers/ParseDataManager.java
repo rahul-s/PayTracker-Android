@@ -36,6 +36,10 @@ public class ParseDataManager {
     private static final String PARSE_KEY_PERSON_PASSWORD = "password";
     private static final String PARSE_KEY_PERSON_SIGNED_UP = "signedUp";
 
+    private static final String PARSE_TABLE_BUDDIES = "Buddies";
+    private static final String PARSE_KEY_BUDDIES_BUDDY_ONE = "buddyOne";
+    private static final String PARSE_KEY_BUDDIES_BUDDY_TWO = "buddyTwo";
+
     private static final String PARSE_TABLE_OUTING = "Outing";
     private static final String PARSE_KEY_OUTING_NAME = "name";
 
@@ -219,6 +223,7 @@ public class ParseDataManager {
                         ParseObject parsePerson = list.get(0);
                         person.setParseId(parsePerson.getObjectId());
                         savePerson(person);
+                        addBuddyRecord(person);
                         callbackListener.completed(true,false);
                     } else {
                         //Email not matching any existing person.
@@ -240,12 +245,29 @@ public class ParseDataManager {
                 if (e == null) {
                     person.setParseId(parseObject.getObjectId());
                     savePerson(person);
+                    addBuddyRecord(person);
                     callbackListener.completed(true, false);
                 } else {
                     callbackListener.completed(false, true);
                 }
             }
         });
+    }
+
+    private void addBuddyRecord(Person buddy) {
+        try {
+            Person self = UserAccountManager.getSharedManager().getLoggedInPerson();
+            ParseObject parseBuddies = new ParseObject(PARSE_TABLE_BUDDIES);
+            ParseObject parseBuddyOne = getParseObject(self);
+            parseBuddyOne.fetchIfNeeded();
+            ParseObject parseBuddyTwo = getParseObject(buddy);
+            parseBuddyTwo.fetchIfNeeded();
+            parseBuddies.put(PARSE_KEY_BUDDIES_BUDDY_ONE, parseBuddyOne);
+            parseBuddies.put(PARSE_KEY_BUDDIES_BUDDY_TWO, parseBuddyTwo);
+            parseBuddies.saveInBackground();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
     //endregion
 
@@ -261,7 +283,8 @@ public class ParseDataManager {
         ParseObject parseObject = new ParseObject(PARSE_TABLE_PERSON);
         parseObject.put(PARSE_KEY_PERSON_EMAIL, person.getEmail());
         parseObject.put(PARSE_KEY_PERSON_NAME, person.getName());
-
+        if (person.getParseId() != null && !person.getParseId().equals(""))
+            parseObject.setObjectId(person.getParseId());
         return parseObject;
     }
 

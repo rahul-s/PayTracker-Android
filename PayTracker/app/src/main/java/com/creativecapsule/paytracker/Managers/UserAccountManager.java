@@ -101,8 +101,8 @@ public class UserAccountManager {
         });
     }
 
-    public ArrayList<Person> getOutingBuddies(int outingId) {
-        return PersonRepository.getOutingPersons(managerContext, outingId);
+    public Person getLoggedInPerson() {
+        return PersonRepository.getPerson(managerContext, email);
     }
 
     public ArrayList<Person> getBuddies() {
