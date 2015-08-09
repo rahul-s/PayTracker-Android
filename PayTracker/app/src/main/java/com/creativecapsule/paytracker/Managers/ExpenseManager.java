@@ -38,8 +38,14 @@ public class ExpenseManager {
         return OutingRepository.getOutings(managerContext);
     }
 
-    public void saveOuting(Outing outing) {
-        OutingRepository.save(managerContext, outing);
+    public void saveOuting(Outing outing, final ExpenseManagerListener callbackListener) {
+        //OutingRepository.save(managerContext, outing);
+        ParseDataManager.getSharedManager().saveOuting(outing, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                callbackListener.completed(status);
+            }
+        });
     }
 
     public Expense getExpense(int expenseId) {
@@ -59,4 +65,8 @@ public class ExpenseManager {
     }
 
     //endregion
+
+    public interface ExpenseManagerListener {
+        void completed(boolean status);
+    }
 }

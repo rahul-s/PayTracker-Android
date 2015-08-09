@@ -8,6 +8,7 @@ import com.creativecapsule.paytracker.Models.Person;
 import com.creativecapsule.paytracker.Repository.ExpenseRepository;
 import com.creativecapsule.paytracker.Repository.OutingRepository;
 import com.creativecapsule.paytracker.Repository.PersonRepository;
+import com.creativecapsule.paytracker.Utility.AsyncTasks.SaveOutingTask;
 import com.creativecapsule.paytracker.Utility.PayTrackerApplication;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -28,44 +29,45 @@ public class ParseDataManager {
     private static final String DEBUG_TAG = "ParseDataManager";
 
     //region Parse table and columns
-    private static final String PARSE_KEY_OBJECT_ID = "ObjectId";
+    public static final String PARSE_KEY_OBJECT_ID = "ObjectId";
 
-    private static final String PARSE_TABLE_PERSON = "Person";
-    private static final String PARSE_KEY_PERSON_NAME = "name";
-    private static final String PARSE_KEY_PERSON_EMAIL = "email";
-    private static final String PARSE_KEY_PERSON_PASSWORD = "password";
-    private static final String PARSE_KEY_PERSON_SIGNED_UP = "signedUp";
+    public static final String PARSE_TABLE_PERSON = "Person";
+    public static final String PARSE_KEY_PERSON_NAME = "name";
+    public static final String PARSE_KEY_PERSON_EMAIL = "email";
+    public static final String PARSE_KEY_PERSON_PASSWORD = "password";
+    public static final String PARSE_KEY_PERSON_SIGNED_UP = "signedUp";
 
-    private static final String PARSE_TABLE_BUDDIES = "Buddies";
-    private static final String PARSE_KEY_BUDDIES_BUDDY_ONE = "buddyOne";
-    private static final String PARSE_KEY_BUDDIES_BUDDY_TWO = "buddyTwo";
+    public static final String PARSE_TABLE_BUDDIES = "Buddies";
+    public static final String PARSE_KEY_BUDDIES_BUDDY_ONE = "buddyOne";
+    public static final String PARSE_KEY_BUDDIES_BUDDY_TWO = "buddyTwo";
 
-    private static final String PARSE_TABLE_OUTING = "Outing";
-    private static final String PARSE_KEY_OUTING_NAME = "name";
+    public static final String PARSE_TABLE_OUTING = "Outing";
+    public static final String PARSE_KEY_OUTING_NAME = "name";
+    public static final String PARSE_KEY_OUTING_CREATED_BY = "createdBy";
 
-    private static final String PARSE_TABLE_OUTING_PERSON = "OutingPerson";
-    private static final String PARSE_KEY_OUTING_PERSON_OUTING = "outing";
-    private static final String PARSE_KEY_OUTING_PERSON_PERSON = "person";
+    public static final String PARSE_TABLE_OUTING_PERSON = "OutingPerson";
+    public static final String PARSE_KEY_OUTING_PERSON_OUTING = "outing";
+    public static final String PARSE_KEY_OUTING_PERSON_PERSON = "person";
 
-    private static final String PARSE_TABLE_OUTING_OWNER = "OutingOwner";
-    private static final String PARSE_KEY_OUTING_OWNER_OUTING = "outing";
-    private static final String PARSE_KEY_OUTING_OWNER_OWNER = "owner";
+    public static final String PARSE_TABLE_OUTING_OWNER = "OutingOwner";
+    public static final String PARSE_KEY_OUTING_OWNER_OUTING = "outing";
+    public static final String PARSE_KEY_OUTING_OWNER_OWNER = "owner";
 
-    private static final String PARSE_TABLE_EXPENSE = "Expense";
-    private static final String PARSE_KEY_EXPENSE_OUTING = "outing";
-    private static final String PARSE_KEY_EXPENSE_EXPENSE_BY = "expenseBy";
-    private static final String PARSE_KEY_EXPENSE_AMOUNT = "amount";
-    private static final String PARSE_KEY_EXPENSE_DESCRIPTION = "description";
-    private static final String PARSE_KEY_EXPENSE_NOTE = "note";
-    private static final String PARSE_KEY_EXPENSE_UPDATED_BY = "updatedBy";
+    public static final String PARSE_TABLE_EXPENSE = "Expense";
+    public static final String PARSE_KEY_EXPENSE_OUTING = "outing";
+    public static final String PARSE_KEY_EXPENSE_EXPENSE_BY = "expenseBy";
+    public static final String PARSE_KEY_EXPENSE_AMOUNT = "amount";
+    public static final String PARSE_KEY_EXPENSE_DESCRIPTION = "description";
+    public static final String PARSE_KEY_EXPENSE_NOTE = "note";
+    public static final String PARSE_KEY_EXPENSE_UPDATED_BY = "updatedBy";
 
-    private static final String PARSE_TABLE_EXPENSE_PERSON = "ExpensePerson";
-    private static final String PARSE_KEY_EXPENSE_PERSON_EXPENSE = "expense";
-    private static final String PARSE_KEY_EXPENSE_PERSON_PERSON = "person";
+    public static final String PARSE_TABLE_EXPENSE_PERSON = "ExpensePerson";
+    public static final String PARSE_KEY_EXPENSE_PERSON_EXPENSE = "expense";
+    public static final String PARSE_KEY_EXPENSE_PERSON_PERSON = "person";
     //endregion
 
 
-    private ParseDataManager() {
+    public ParseDataManager() {
         this.managerContext = PayTrackerApplication.getAppContext();
     }
 
@@ -172,8 +174,7 @@ public class ParseDataManager {
                     Person person = getPerson(parsePerson);
                     savePerson(person);
                     callbackListener.completed(true, false);
-                }
-                else {
+                } else {
                     callbackListener.completed(false, true);
                 }
             }
@@ -223,8 +224,12 @@ public class ParseDataManager {
                         ParseObject parsePerson = list.get(0);
                         person.setParseId(parsePerson.getObjectId());
                         savePerson(person);
-                        addBuddyRecord(person);
-                        callbackListener.completed(true,false);
+                        addBuddyRecord(person, new ParseDataManagerListener() {
+                            @Override
+                            public void completed(boolean status, boolean error) {
+                                callbackListener.completed(status, error);
+                            }
+                        });
                     } else {
                         //Email not matching any existing person.
                         confirmAddPerson(person.getEmail(), person.getName(), callbackListener);
@@ -245,8 +250,13 @@ public class ParseDataManager {
                 if (e == null) {
                     person.setParseId(parseObject.getObjectId());
                     savePerson(person);
-                    addBuddyRecord(person);
-                    callbackListener.completed(true, false);
+                    addBuddyRecord(person, new ParseDataManagerListener() {
+                        @Override
+                        public void completed(boolean status, boolean error) {
+                            callbackListener.completed(status, error);
+                        }
+                    });
+
                 } else {
                     callbackListener.completed(false, true);
                 }
@@ -254,7 +264,43 @@ public class ParseDataManager {
         });
     }
 
-    private void addBuddyRecord(Person buddy) {
+    private void addBuddyRecord(final Person buddy, final ParseDataManagerListener callbackListener) {
+        try {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_BUDDIES);
+            Person self = UserAccountManager.getSharedManager().getLoggedInPerson();
+            ParseObject parseBuddyOne = getParseObject(self);
+            parseBuddyOne.fetchIfNeeded();
+            ParseObject parseBuddyTwo = getParseObject(buddy);
+            parseBuddyTwo.fetchIfNeeded();
+            query.whereEqualTo(PARSE_KEY_BUDDIES_BUDDY_ONE, parseBuddyOne);
+            query.whereEqualTo(PARSE_KEY_BUDDIES_BUDDY_TWO, parseBuddyTwo);
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> list, ParseException e) {
+                    if (e == null) {
+                        if (list != null && list.size() > 0) {
+                            callbackListener.completed(false, false);
+                        } else {
+                            //Email not matching any existing person.
+                            confirmAddBuddy(buddy, new ParseDataManagerListener() {
+                                @Override
+                                public void completed(boolean status, boolean error) {
+                                    callbackListener.completed(status, error);
+                                }
+                            });
+                        }
+                    } else {
+                        callbackListener.completed(false, true);
+                    }
+                }
+            });
+        } catch (ParseException e) {
+            e.printStackTrace();
+            callbackListener.completed(false, true);
+        }
+    }
+
+    private void confirmAddBuddy(Person buddy, final ParseDataManagerListener callbackListener) {
         try {
             Person self = UserAccountManager.getSharedManager().getLoggedInPerson();
             ParseObject parseBuddies = new ParseObject(PARSE_TABLE_BUDDIES);
@@ -264,10 +310,37 @@ public class ParseDataManager {
             parseBuddyTwo.fetchIfNeeded();
             parseBuddies.put(PARSE_KEY_BUDDIES_BUDDY_ONE, parseBuddyOne);
             parseBuddies.put(PARSE_KEY_BUDDIES_BUDDY_TWO, parseBuddyTwo);
-            parseBuddies.saveInBackground();
+            parseBuddies.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        callbackListener.completed(true, false);
+                    }
+                    else {
+                        callbackListener.completed(false, false);
+                    }
+                }
+            });
         } catch (ParseException e) {
             e.printStackTrace();
+            callbackListener.completed(false, false);
         }
+    }
+
+    public void saveOuting(Outing outing, final ParseDataManagerListener callbackListener) {
+        SaveOutingTask saveOutingTask = new SaveOutingTask(outing, new SaveOutingTask.TaskCompletedListener() {
+            @Override
+            public void completed(Outing outing, boolean status) {
+                if (status) {
+                    saveOutingToDB(outing);
+                    callbackListener.completed(true, false);
+                }
+                else {
+                    callbackListener.completed(false, false);
+                }
+            }
+        });
+        saveOutingTask.execute();
     }
     //endregion
 
@@ -288,18 +361,7 @@ public class ParseDataManager {
         return parseObject;
     }
 
-    /**
-     * creates a list of Parse objects to be saved to parse.
-     * The list will contain one object for the outing, one Parse object for each person in outing buddies,
-     * and a Parse object for the Owner.
-     * @param outing
-     * @return
-     */
-    private List<ParseObject> getParseObjects(Outing outing) {
-        ArrayList<ParseObject> parseObjects = new ArrayList<>();
-        //  TODO: populate the list.
-        return parseObjects;
-    }
+
 
     /**
      * creates a list of Parse objects to be saved to parse.
@@ -330,7 +392,7 @@ public class ParseDataManager {
 
 
     //region Database methods
-    private void saveOuting(Outing outing) {
+    private void saveOutingToDB(Outing outing) {
         OutingRepository.save(managerContext, outing);
     }
 

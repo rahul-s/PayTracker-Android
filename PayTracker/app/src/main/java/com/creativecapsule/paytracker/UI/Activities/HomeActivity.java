@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.creativecapsule.paytracker.Managers.ExpenseManager;
 import com.creativecapsule.paytracker.Managers.UserAccountManager;
@@ -144,14 +145,14 @@ public class HomeActivity extends BaseActivity implements AdapterView.OnItemClic
     }
 
     private void newOutingStep1Completed() {
-        newOutingDialog1.dismiss();
         EditText tvOutingName = (EditText) newOutingDialog1View.findViewById(R.id.new_outing_title);
 
         if (tvOutingName.getText().toString().equals("")){
-            //TODO: show alert to enter name
-            cancelNewOuting();
+            Toast.makeText(this, getResources().getString(R.string.alert_name_empty), Toast.LENGTH_SHORT).show();
+            return;
         }
         else {
+            newOutingDialog1.dismiss();
             newOuting = new Outing(tvOutingName.getText().toString(), null);
             showNewOutingBuddiesDialog();
         }
@@ -182,7 +183,6 @@ public class HomeActivity extends BaseActivity implements AdapterView.OnItemClic
     }
 
     private void newOutingStep2Completed() {
-        newOutingDialog2.dismiss();
         ArrayList<Person> selectedPeople = new ArrayList<>();
         ListView buddiesListView = (ListView) newOutingDialog2View.findViewById(R.id.people_select_list);
         for (int i=0 ; i<this.buddies.size() ; i++) {
@@ -191,8 +191,19 @@ public class HomeActivity extends BaseActivity implements AdapterView.OnItemClic
             }
         }
         newOuting.setPersons(selectedPeople);
-        ExpenseManager.getSharedInstance().saveOuting(newOuting);
-        reloadOutingsList();
+        ExpenseManager.getSharedInstance().saveOuting(newOuting, new ExpenseManager.ExpenseManagerListener() {
+            @Override
+            public void completed(boolean status) {
+                if (status) {
+                    newOutingDialog2.dismiss();
+                    reloadOutingsList();
+                }
+                else {
+                    Toast.makeText(HomeActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
     private void cancelNewOuting() {

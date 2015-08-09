@@ -253,7 +253,6 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
     }
 
     private void addBuddySave() {
-        addBuddiesDialog.dismiss();
         ArrayList<Person> selectedPeople = new ArrayList<>();
         ListView buddiesListView = (ListView) addBuddiesDialogView.findViewById(R.id.people_select_list);
         for (int i=0 ; i<this.otherBuddies.size() ; i++) {
@@ -262,10 +261,19 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
             }
         }
         this.outing.addPersons(selectedPeople);
-        ExpenseManager.getSharedInstance().saveOuting(this.outing);
-        initBuddiesList();
-        initOtherBuddies();
-        showTab(activeTab);
+        ExpenseManager.getSharedInstance().saveOuting(this.outing, new ExpenseManager.ExpenseManagerListener() {
+            @Override
+            public void completed(boolean status) {
+                if (status) {
+                    addBuddiesDialog.dismiss();
+                    initBuddiesList();
+                    initOtherBuddies();
+                    showTab(activeTab);
+                } else {
+                    Toast.makeText(OutingDetailsActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void addExpense() {
