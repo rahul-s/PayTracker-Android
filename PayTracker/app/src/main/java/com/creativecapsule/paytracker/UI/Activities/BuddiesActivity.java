@@ -38,7 +38,7 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        buddies = UserAccountManager.getSharedManager().getPersons();
+        buddies = UserAccountManager.getSharedManager().getBuddies();
         personsAdapter = new PersonsAdapter(this);
         personsAdapter.setPersons(buddies);
         ListView buddiesListView = (ListView) findViewById(R.id.list_view_buddies);
@@ -110,8 +110,12 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
             Toast.makeText(BuddiesActivity.this, getResources().getString(R.string.alert_invalid_email), Toast.LENGTH_SHORT).show();
             return;
         }
-
-        Person newBuddy = new Person(etName.getText().toString(), email, etNickname.getText().toString());
+        String name = etName.getText().toString();
+        if (name == null || name.equals("")) {
+            Toast.makeText(this, getResources().getString(R.string.alert_name_empty), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Person newBuddy = new Person(name, email, etNickname.getText().toString());
         UserAccountManager.getSharedManager().savePerson(newBuddy);
         newBuddyDialog.dismiss();
 
@@ -123,7 +127,7 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
     }
 
     private void reloadBuddyList() {
-        buddies = UserAccountManager.getSharedManager().getPersons();
+        buddies = UserAccountManager.getSharedManager().getBuddies();
         personsAdapter.setPersons(buddies);
         personsAdapter.notifyDataSetChanged();
     }

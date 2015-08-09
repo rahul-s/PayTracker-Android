@@ -9,6 +9,7 @@ import com.creativecapsule.paytracker.Utility.Constants;
 import com.creativecapsule.paytracker.Utility.PayTrackerApplication;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by rahul on 08/08/15.
@@ -102,6 +103,18 @@ public class UserAccountManager {
 
     public ArrayList<Person> getOutingBuddies(int outingId) {
         return PersonRepository.getOutingPersons(managerContext, outingId);
+    }
+
+    public ArrayList<Person> getBuddies() {
+        ArrayList<Person> allPersons = PersonRepository.getPersons(managerContext);
+        //remove self from buddies.
+        for (Iterator<Person> iterator = allPersons.iterator(); iterator.hasNext();) {
+            Person person = iterator.next();
+            if (person.getEmail().equals(email)) {
+                iterator.remove();
+            }
+        }
+        return allPersons;
     }
 
     public ArrayList<Person> getPersons() {

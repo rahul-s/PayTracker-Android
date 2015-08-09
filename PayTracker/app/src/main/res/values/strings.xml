@@ -46,7 +46,7 @@
     <string name="alert_failed_task">Operation failed...!</string>
     <string name="alert_passwords_empty">Please enter the password.</string>
     <string name="alert_passwords_different">The passwords do not match.</string>
-    <string name="alert_name_empty">Please enter your name.</string>
+    <string name="alert_name_empty">Please enter name.</string>
     <string name="alert_no_more_buddies">All friends are already added.</string>
     <string name="alert_incorrect_amount">Please input a proper amount.</string>
     <string name="alert_select_people">Please select at least one person for the expense.</string>
