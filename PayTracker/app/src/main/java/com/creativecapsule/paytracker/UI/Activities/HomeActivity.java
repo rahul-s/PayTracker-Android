@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.creativecapsule.paytracker.Managers.ExpenseManager;
+import com.creativecapsule.paytracker.Managers.UserAccountManager;
 import com.creativecapsule.paytracker.Models.Outing;
 import com.creativecapsule.paytracker.Models.Person;
 import com.creativecapsule.paytracker.R;
@@ -43,7 +44,7 @@ public class HomeActivity extends BaseActivity implements AdapterView.OnItemClic
         actionBar.setHomeAsUpIndicator(getResources().getDrawable(R.drawable.ic_menu_home));
 
         outings = ExpenseManager.getSharedInstance().getOutings();
-        buddies = ExpenseManager.getSharedInstance().getPersons();
+        buddies = UserAccountManager.getSharedManager().getPersons();
         outingsAdapter = new OutingsAdapter(this);
         outingsAdapter.setOutings(outings);
         ListView outingsListView = (ListView) findViewById(R.id.list_view_outings);
@@ -54,7 +55,7 @@ public class HomeActivity extends BaseActivity implements AdapterView.OnItemClic
     @Override
     protected void onResume() {
         super.onResume();
-        buddies = ExpenseManager.getSharedInstance().getPersons();
+        buddies = UserAccountManager.getSharedManager().getPersons();
         reloadOutingsList();
     }
 

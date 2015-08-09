@@ -58,17 +58,5 @@ public class ExpenseManager {
         ExpenseRepository.deleteExpense(managerContext, expenseId);
     }
 
-    public ArrayList<Person> getOutingBuddies(int outingId) {
-        return PersonRepository.getOutingPersons(managerContext, outingId);
-    }
-
-    public ArrayList<Person> getPersons() {
-        return PersonRepository.getPersons(managerContext);
-    }
-
-    public void savePerson(Person person) {
-        PersonRepository.save(managerContext, person);
-    }
-
     //endregion
 }

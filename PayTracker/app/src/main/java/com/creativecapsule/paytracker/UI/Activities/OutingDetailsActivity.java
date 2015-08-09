@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.creativecapsule.paytracker.Managers.ExpenseManager;
+import com.creativecapsule.paytracker.Managers.UserAccountManager;
 import com.creativecapsule.paytracker.Models.Expense;
 import com.creativecapsule.paytracker.Models.Outing;
 import com.creativecapsule.paytracker.Models.Person;
@@ -205,7 +206,7 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
 
     private void initOtherBuddies() {
         otherBuddies = new ArrayList<>();
-        ArrayList<Person> allBuddies = ExpenseManager.getSharedInstance().getPersons();
+        ArrayList<Person> allBuddies = UserAccountManager.getSharedManager().getPersons();
         for (Person buddy : allBuddies) {
             if (!this.outing.isPersonIncluded(buddy)) {
                 otherBuddies.add(buddy);

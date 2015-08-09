@@ -1,7 +1,6 @@
 package com.creativecapsule.paytracker.Managers;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.creativecapsule.paytracker.Models.Expense;
 import com.creativecapsule.paytracker.Models.Outing;
@@ -90,12 +89,12 @@ public class ParseDataManager {
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
                     if (list != null && list.size() > 0) {
-                        callbackListener.completed(true);
+                        callbackListener.completed(true, false);
                     } else {
-                        callbackListener.completed(false);
+                        callbackListener.completed(false, false);
                     }
                 } else {
-                    callbackListener.completed(false);
+                    callbackListener.completed(false, true);
                 }
             }
         });
@@ -122,7 +121,7 @@ public class ParseDataManager {
                         boolean signedUp = person.getBoolean(PARSE_KEY_PERSON_SIGNED_UP);
                         if (signedUp) {
                             //The person has already signed up.
-                            callbackListener.completed(false);
+                            callbackListener.completed(false, false);
                         } else {
                             //The existing person has not signed up.
                             signUpPerson(person, name, password, callbackListener);
@@ -132,7 +131,7 @@ public class ParseDataManager {
                         confirmRegister(email, password, name, callbackListener);
                     }
                 } else {
-                    callbackListener.completed(false);
+                    callbackListener.completed(false, true);
                 }
             }
         });
@@ -150,10 +149,10 @@ public class ParseDataManager {
                 if (e == null) {
                     person.setParseId(parseObject.getObjectId());
                     savePerson(person);
-                    callbackListener.completed(true);
+                    callbackListener.completed(true, false);
                 }
                 else {
-                    callbackListener.completed(false);
+                    callbackListener.completed(false, true);
                 }
             }
         });
@@ -169,10 +168,10 @@ public class ParseDataManager {
                 if (e == null) {
                     Person person = getPerson(parsePerson);
                     savePerson(person);
-                    callbackListener.completed(true);
+                    callbackListener.completed(true, false);
                 }
                 else {
-                    callbackListener.completed(false);
+                    callbackListener.completed(false, true);
                 }
             }
         });
@@ -198,12 +197,12 @@ public class ParseDataManager {
                         ParseObject parsePerson = list.get(0);
                         Person person = getPerson(parsePerson);
                         savePerson(person);
-                        callbackListener.completed(true);
+                        callbackListener.completed(true, false);
                     } else {
-                        callbackListener.completed(false);
+                        callbackListener.completed(false, false);
                     }
                 } else {
-                    callbackListener.completed(false);
+                    callbackListener.completed(false, true);
                 }
             }
         });
@@ -219,7 +218,9 @@ public class ParseDataManager {
      * @return
      */
     private ParseObject getParseObject(Person person) {
-        ParseObject parseObject = null;
+        ParseObject parseObject = new ParseObject(PARSE_TABLE_PERSON);
+        parseObject.put(PARSE_KEY_PERSON_EMAIL, person.getEmail());
+        parseObject.put(PARSE_KEY_PERSON_NAME, person.getName());
 
         return parseObject;
     }
@@ -280,6 +281,6 @@ public class ParseDataManager {
     //endregion
 
     public interface ParseDataManagerListener {
-        void completed(boolean status);
+        void completed(boolean status, boolean error);
     }
 }

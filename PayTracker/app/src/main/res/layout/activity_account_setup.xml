@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.creativecapsule.paytracker.UI.Activities.InputEmailActivity">
+
+    <EditText
+        android:id="@+id/name_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/global_margin_20"
+        android:inputType="text"
+        android:hint="@string/name"/>
+    <EditText
+        android:id="@+id/password_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/global_margin_20"
+        android:inputType="textPassword"
+        android:hint="@string/password"/>
+    <EditText
+        android:id="@+id/password_confirm_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/global_margin_20"
+        android:inputType="textPassword"
+        android:hint="@string/confirm_password"/>
+
+    <Button
+        android:id="@+id/account_setup_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/next_step"
+        android:layout_margin="@dimen/global_margin_20"
+        android:background="@color/button_bg_color"
+        android:textColor="@color/button_text_color"
+        android:textSize="@dimen/button_text_size_large"/>
+
+</LinearLayout>
