@@ -2,7 +2,6 @@ package com.creativecapsule.paytracker.UI.Activities;
 
 import android.app.Dialog;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.creativecapsule.paytracker.Managers.ExpenseManager;
 import com.creativecapsule.paytracker.Managers.UserAccountManager;
 import com.creativecapsule.paytracker.Models.Person;
 import com.creativecapsule.paytracker.R;
@@ -116,10 +114,18 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
             return;
         }
         Person newBuddy = new Person(name, email, etNickname.getText().toString());
-        UserAccountManager.getSharedManager().savePerson(newBuddy);
-        newBuddyDialog.dismiss();
+        UserAccountManager.getSharedManager().addPerson(newBuddy, new UserAccountManager.UserAccountManagerListener() {
+            @Override
+            public void completed(boolean status) {
+                if (status) {
+                    newBuddyDialog.dismiss();
+                    reloadBuddyList();
+                } else {
+                    Toast.makeText(BuddiesActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
-        reloadBuddyList();
     }
 
     private void cancelNewBuddy() {

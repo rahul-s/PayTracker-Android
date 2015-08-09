@@ -121,8 +121,14 @@ public class UserAccountManager {
         return PersonRepository.getPersons(managerContext);
     }
 
-    public void savePerson(Person person) {
-        PersonRepository.save(managerContext, person);
+    public void addPerson(Person person, final UserAccountManagerListener callbackListener) {
+        //PersonRepository.save(managerContext, person);
+        ParseDataManager.getSharedManager().addPerson(person, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                callbackListener.completed(status);
+            }
+        });
     }
     //endregion
 

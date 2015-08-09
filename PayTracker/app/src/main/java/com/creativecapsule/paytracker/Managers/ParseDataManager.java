@@ -150,8 +150,7 @@ public class ParseDataManager {
                     person.setParseId(parseObject.getObjectId());
                     savePerson(person);
                     callbackListener.completed(true, false);
-                }
-                else {
+                } else {
                     callbackListener.completed(false, true);
                 }
             }
@@ -201,6 +200,47 @@ public class ParseDataManager {
                     } else {
                         callbackListener.completed(false, false);
                     }
+                } else {
+                    callbackListener.completed(false, true);
+                }
+            }
+        });
+    }
+
+    public void addPerson(final Person person, final ParseDataManagerListener callbackListener) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_PERSON);
+        query.whereEqualTo(PARSE_KEY_PERSON_EMAIL, person.getEmail());
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    if (list != null && list.size() > 0) {
+                        //Person found with matching email.
+                        ParseObject parsePerson = list.get(0);
+                        person.setParseId(parsePerson.getObjectId());
+                        savePerson(person);
+                        callbackListener.completed(true,false);
+                    } else {
+                        //Email not matching any existing person.
+                        confirmAddPerson(person.getEmail(), person.getName(), callbackListener);
+                    }
+                } else {
+                    callbackListener.completed(false, true);
+                }
+            }
+        });
+    }
+
+    private void confirmAddPerson(String email, String name, final ParseDataManagerListener callbackListener) {
+        final Person person = new Person(name, email, "");
+        final ParseObject parseObject = getParseObject(person);
+        parseObject.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    person.setParseId(parseObject.getObjectId());
+                    savePerson(person);
+                    callbackListener.completed(true, false);
                 } else {
                     callbackListener.completed(false, true);
                 }
