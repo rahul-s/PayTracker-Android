@@ -2,7 +2,6 @@ package com.creativecapsule.paytracker.UI.Activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -174,8 +173,16 @@ public class ExpenseActivity extends BaseActivity implements AdapterView.OnItemS
         }
 
         // save
-        ExpenseManager.getSharedInstance().saveExpense(this.newExpense);
-
-        finish();
+        ExpenseManager.getSharedInstance().saveExpense(this.newExpense, new ExpenseManager.ExpenseManagerListener() {
+            @Override
+            public void completed(boolean status) {
+                if (status) {
+                    finish();
+                } else {
+                    Toast.makeText(ExpenseActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        });
     }
 }

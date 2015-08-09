@@ -56,8 +56,14 @@ public class ExpenseManager {
         return ExpenseRepository.getExpenses(managerContext, outing);
     }
 
-    public void saveExpense(Expense expense) {
-        ExpenseRepository.save(managerContext, expense);
+    public void saveExpense(Expense expense, final ExpenseManagerListener callbackListener) {
+        //ExpenseRepository.save(managerContext, expense);
+        ParseDataManager.getSharedManager().saveExpense(expense, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                callbackListener.completed(status);
+            }
+        });
     }
 
     public void deleteExpense(int expenseId) {

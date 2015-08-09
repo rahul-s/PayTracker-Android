@@ -35,10 +35,12 @@ public class SaveOutingTask extends AsyncTask<Void, Integer, Boolean> {
                 isNewOuting = false;
             }
 
-            ParseObject parseOuting = getParseObject(outing);
+            //save outing
+            ParseObject parseOuting = ParseDataManager.getSharedManager().getParseObject(outing);
             parseOuting.save();
             outing.setParseId(parseOuting.getObjectId());
 
+            //save outing person
             for (Person outingPerson : outing.getPersons()){
                 saveOutingPerson(outing, outingPerson);
             }
@@ -46,7 +48,7 @@ public class SaveOutingTask extends AsyncTask<Void, Integer, Boolean> {
             if (isNewOuting) {
                 // Assign self as owner of this outing if newly created.
                 Person outingOwner = UserAccountManager.getSharedManager().getLoggedInPerson();
-                ParseObject outingOwnerObj = getParseObject(outingOwner);
+                ParseObject outingOwnerObj = ParseDataManager.getSharedManager().getParseObject(outingOwner);
                 parseOuting.put(ParseDataManager.PARSE_KEY_OUTING_CREATED_BY, outingOwnerObj);
                 parseOuting.save();
                 saveOutingOwner(outing, outingOwner);
@@ -68,50 +70,13 @@ public class SaveOutingTask extends AsyncTask<Void, Integer, Boolean> {
         }
     }
 
-    /**
-     * creates a Parse object to be saved to parse.
-     * @param outing
-     * @return
-     */
-    private ParseObject getParseObject(Outing outing) {
-        ParseObject parseOuting = new ParseObject(ParseDataManager.PARSE_TABLE_OUTING);
-        parseOuting.put(ParseDataManager.PARSE_KEY_OUTING_NAME, outing.getTitle());
-        try {
-            if (outing.getParseId()!=null && !outing.getParseId().equals("")) {
-                parseOuting.setObjectId(outing.getParseId());
-                parseOuting.fetchIfNeeded();
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return parseOuting;
-    }
 
-    /**
-     * creates a Parse objects to be saved to parse.
-     * The list will contain one object for the person
-     * @param person
-     * @return
-     */
-    private ParseObject getParseObject(Person person) {
-        ParseObject parseObject = new ParseObject(ParseDataManager.PARSE_TABLE_PERSON);
-        parseObject.put(ParseDataManager.PARSE_KEY_PERSON_EMAIL, person.getEmail());
-        parseObject.put(ParseDataManager.PARSE_KEY_PERSON_NAME, person.getName());
-        try {
-            if (person.getParseId() != null && !person.getParseId().equals("")) {
-                parseObject.setObjectId(person.getParseId());
-                parseObject.fetchIfNeeded();
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return parseObject;
-    }
+
 
     private void saveOutingPerson(Outing outing, Person person) {
         ParseObject parseObject;
-        ParseObject parseOuting = getParseObject(outing);
-        ParseObject parsePerson = getParseObject(person);
+        ParseObject parseOuting = ParseDataManager.getSharedManager().getParseObject(outing);
+        ParseObject parsePerson = ParseDataManager.getSharedManager().getParseObject(person);
         ParseQuery<ParseObject> outingPersonQuery = ParseQuery.getQuery(ParseDataManager.PARSE_TABLE_OUTING_PERSON);
         outingPersonQuery.whereEqualTo(ParseDataManager.PARSE_KEY_OUTING_PERSON_OUTING, parseOuting);
         outingPersonQuery.whereEqualTo(ParseDataManager.PARSE_KEY_OUTING_PERSON_PERSON, parsePerson);
@@ -133,8 +98,8 @@ public class SaveOutingTask extends AsyncTask<Void, Integer, Boolean> {
 
     private void saveOutingOwner(Outing outing, Person person) {
         ParseObject parseObject;
-        ParseObject parseOuting = getParseObject(outing);
-        ParseObject parsePerson = getParseObject(person);
+        ParseObject parseOuting = ParseDataManager.getSharedManager().getParseObject(outing);
+        ParseObject parsePerson = ParseDataManager.getSharedManager().getParseObject(person);
         ParseQuery<ParseObject> outingPersonQuery = ParseQuery.getQuery(ParseDataManager.PARSE_TABLE_OUTING_OWNER);
         outingPersonQuery.whereEqualTo(ParseDataManager.PARSE_KEY_OUTING_OWNER_OUTING, parseOuting);
         outingPersonQuery.whereEqualTo(ParseDataManager.PARSE_KEY_OUTING_OWNER_OWNER, parsePerson);

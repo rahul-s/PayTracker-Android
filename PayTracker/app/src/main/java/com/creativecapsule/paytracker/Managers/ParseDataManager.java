@@ -8,6 +8,7 @@ import com.creativecapsule.paytracker.Models.Person;
 import com.creativecapsule.paytracker.Repository.ExpenseRepository;
 import com.creativecapsule.paytracker.Repository.OutingRepository;
 import com.creativecapsule.paytracker.Repository.PersonRepository;
+import com.creativecapsule.paytracker.Utility.AsyncTasks.SaveExpenseTask;
 import com.creativecapsule.paytracker.Utility.AsyncTasks.SaveOutingTask;
 import com.creativecapsule.paytracker.Utility.PayTrackerApplication;
 import com.parse.FindCallback;
@@ -315,8 +316,7 @@ public class ParseDataManager {
                 public void done(ParseException e) {
                     if (e == null) {
                         callbackListener.completed(true, false);
-                    }
-                    else {
+                    } else {
                         callbackListener.completed(false, false);
                     }
                 }
@@ -342,6 +342,22 @@ public class ParseDataManager {
         });
         saveOutingTask.execute();
     }
+
+    public void saveExpense(Expense expense, final ParseDataManagerListener callbackListener) {
+        SaveExpenseTask saveExpenseTask = new SaveExpenseTask(expense, new SaveExpenseTask.TaskCompletedListener() {
+            @Override
+            public void completed(Expense expense, boolean status) {
+                if (status) {
+                    saveExpenseToDB(expense);
+                    callbackListener.completed(true, false);
+                }
+                else {
+                    callbackListener.completed(false, false);
+                }
+            }
+        });
+        saveExpenseTask.execute();
+    }
     //endregion
 
     //region Parse conversion methods
@@ -352,16 +368,39 @@ public class ParseDataManager {
      * @param person
      * @return
      */
-    private ParseObject getParseObject(Person person) {
-        ParseObject parseObject = new ParseObject(PARSE_TABLE_PERSON);
-        parseObject.put(PARSE_KEY_PERSON_EMAIL, person.getEmail());
-        parseObject.put(PARSE_KEY_PERSON_NAME, person.getName());
-        if (person.getParseId() != null && !person.getParseId().equals(""))
-            parseObject.setObjectId(person.getParseId());
+    public ParseObject getParseObject(Person person) {
+        ParseObject parseObject = new ParseObject(ParseDataManager.PARSE_TABLE_PERSON);
+        parseObject.put(ParseDataManager.PARSE_KEY_PERSON_EMAIL, person.getEmail());
+        parseObject.put(ParseDataManager.PARSE_KEY_PERSON_NAME, person.getName());
+        try {
+            if (person.getParseId() != null && !person.getParseId().equals("")) {
+                parseObject.setObjectId(person.getParseId());
+                parseObject.fetchIfNeeded();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return parseObject;
     }
 
-
+    /**
+     * creates a Parse object to be saved to parse.
+     * @param outing
+     * @return
+     */
+    public ParseObject getParseObject(Outing outing) {
+        ParseObject parseOuting = new ParseObject(PARSE_TABLE_OUTING);
+        parseOuting.put(ParseDataManager.PARSE_KEY_OUTING_NAME, outing.getTitle());
+        try {
+            if (outing.getParseId()!=null && !outing.getParseId().equals("")) {
+                parseOuting.setObjectId(outing.getParseId());
+                parseOuting.fetchIfNeeded();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return parseOuting;
+    }
 
     /**
      * creates a list of Parse objects to be saved to parse.
@@ -369,11 +408,37 @@ public class ParseDataManager {
      * @param expense
      * @return
      */
-    private List<ParseObject> getParseObjects(Expense expense) {
-        ArrayList<ParseObject> parseObjects = new ArrayList<>();
-        // TODO: populate the list
-        return parseObjects;
+    public ParseObject getParseObject(Expense expense) {
+        ParseObject parseExpense = new ParseObject(PARSE_TABLE_EXPENSE);
+        parseExpense.put(PARSE_KEY_EXPENSE_NOTE, expense.getNote());
+        parseExpense.put(PARSE_KEY_EXPENSE_AMOUNT, expense.getAmount());
+        parseExpense.put(PARSE_KEY_EXPENSE_DESCRIPTION, expense.getDescription());
+        try {
+            if (expense.getParseId() != null && !expense.getParseId().equals("")) {
+                parseExpense.setObjectId(expense.getParseId());
+                parseExpense.fetchIfNeeded();
+            }
+
+            ParseObject parseOuting = getParseObject(expense.getOuting());
+            parseOuting.fetchIfNeeded();
+            parseExpense.put(PARSE_KEY_EXPENSE_OUTING, parseOuting);
+
+            ParseObject parsePerson = getParseObject(expense.getExpenseBy());
+            parsePerson.fetchIfNeeded();
+            parseExpense.put(PARSE_KEY_EXPENSE_EXPENSE_BY, parsePerson);
+
+            Person updatedBy = UserAccountManager.getSharedManager().getLoggedInPerson();
+            ParseObject parseUpdatedBy = getParseObject(updatedBy);
+            parseUpdatedBy.fetchIfNeeded();
+            parseExpense.put(PARSE_KEY_EXPENSE_UPDATED_BY, parseUpdatedBy);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return parseExpense;
     }
+
 
     private Person getPerson(ParseObject parseObject) {
         if (parseObject.getClassName().equals(PARSE_TABLE_PERSON)) {
@@ -396,7 +461,7 @@ public class ParseDataManager {
         OutingRepository.save(managerContext, outing);
     }
 
-    private void saveExpense(Expense expense) {
+    private void saveExpenseToDB(Expense expense) {
         ExpenseRepository.save(managerContext, expense);
     }
 
