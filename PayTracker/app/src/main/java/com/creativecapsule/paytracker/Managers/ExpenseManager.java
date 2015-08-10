@@ -66,8 +66,17 @@ public class ExpenseManager {
         });
     }
 
-    public void deleteExpense(int expenseId) {
-        ExpenseRepository.deleteExpense(managerContext, expenseId);
+    public void deleteExpense(final int expenseId, final ExpenseManagerListener callbackListener) {
+        Expense expense = getExpense(expenseId);
+        ParseDataManager.getSharedManager().deleteExpense(expense, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                if (status) {
+                    ExpenseRepository.deleteExpense(managerContext, expenseId);
+                }
+                callbackListener.completed(status);
+            }
+        });
     }
 
     //endregion

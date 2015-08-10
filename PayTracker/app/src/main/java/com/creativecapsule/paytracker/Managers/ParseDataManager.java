@@ -13,6 +13,7 @@ import com.creativecapsule.paytracker.Utility.AsyncTasks.DownloadDataTask;
 import com.creativecapsule.paytracker.Utility.AsyncTasks.SaveExpenseTask;
 import com.creativecapsule.paytracker.Utility.AsyncTasks.SaveOutingTask;
 import com.creativecapsule.paytracker.Utility.PayTrackerApplication;
+import com.parse.DeleteCallback;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -359,6 +360,21 @@ public class ParseDataManager {
             }
         });
         saveExpenseTask.execute();
+    }
+
+    public void deleteExpense(Expense expense, final ParseDataManagerListener callbackListener) {
+        ParseObject parseExpense = getParseObject(expense);
+        parseExpense.deleteInBackground(new DeleteCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    callbackListener.completed(true, false);
+                }
+                else {
+                    callbackListener.completed(false,false);
+                }
+            }
+        });
     }
 
     public void downloadUserData(Person self, final ParseDataManagerListener callbackListener) {

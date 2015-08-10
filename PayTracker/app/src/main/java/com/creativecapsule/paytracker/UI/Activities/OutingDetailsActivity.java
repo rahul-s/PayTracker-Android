@@ -154,10 +154,19 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO: delete expense.
                         Expense expense = outingExpenses.get(index);
-                        ExpenseManager.getSharedInstance().deleteExpense(expense.getIdentifier());
-                        initExpenseList();
-                        initBuddiesList();
-                        showTab(activeTab);
+                        ExpenseManager.getSharedInstance().deleteExpense(expense.getIdentifier(), new ExpenseManager.ExpenseManagerListener() {
+                            @Override
+                            public void completed(boolean status) {
+                                if (status) {
+                                    initExpenseList();
+                                    initBuddiesList();
+                                    showTab(activeTab);
+                                }
+                                else {
+                                    Toast.makeText(OutingDetailsActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     }
                 })
                 .setNegativeButton(R.string.dialog_confirm_delete_no, null)
