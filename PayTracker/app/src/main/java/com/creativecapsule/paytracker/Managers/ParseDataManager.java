@@ -1,6 +1,7 @@
 package com.creativecapsule.paytracker.Managers;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.creativecapsule.paytracker.Models.Expense;
 import com.creativecapsule.paytracker.Models.Outing;
@@ -8,6 +9,7 @@ import com.creativecapsule.paytracker.Models.Person;
 import com.creativecapsule.paytracker.Repository.ExpenseRepository;
 import com.creativecapsule.paytracker.Repository.OutingRepository;
 import com.creativecapsule.paytracker.Repository.PersonRepository;
+import com.creativecapsule.paytracker.Utility.AsyncTasks.DownloadDataTask;
 import com.creativecapsule.paytracker.Utility.AsyncTasks.SaveExpenseTask;
 import com.creativecapsule.paytracker.Utility.AsyncTasks.SaveOutingTask;
 import com.creativecapsule.paytracker.Utility.PayTrackerApplication;
@@ -358,6 +360,32 @@ public class ParseDataManager {
         });
         saveExpenseTask.execute();
     }
+
+    public void downloadUserData(Person self, final ParseDataManagerListener callbackListener) {
+        DownloadDataTask downloadDataTask = new DownloadDataTask(self, new DownloadDataTask.DownloadTaskCompleted() {
+            @Override
+            public void downloadedBuddy(Person buddy) {
+                Log.d(DEBUG_TAG, "Saving buddy:" + buddy.getName());
+                savePerson(buddy);
+            }
+
+            @Override
+            public void downloadedOuting(Outing outing) {
+                saveOutingToDB(outing);
+            }
+
+            @Override
+            public void downloadedExpense(Expense expense) {
+                saveExpenseToDB(expense);
+            }
+
+            @Override
+            public void downloadCompleted(boolean error) {
+                callbackListener.completed(true, error);
+            }
+        });
+        downloadDataTask.execute();
+    }
     //endregion
 
     //region Parse conversion methods
@@ -439,14 +467,70 @@ public class ParseDataManager {
         return parseExpense;
     }
 
-
-    private Person getPerson(ParseObject parseObject) {
+    public Person getPerson(ParseObject parseObject) {
         if (parseObject.getClassName().equals(PARSE_TABLE_PERSON)) {
+            Person person = PersonRepository.getPersonByParseId(managerContext, parseObject.getObjectId());
+            if (person == null) {
+                person = new Person();
+            }
             String name = parseObject.getString(PARSE_KEY_PERSON_NAME);
             String email = parseObject.getString(PARSE_KEY_PERSON_EMAIL);
-            Person person = new Person(name, email, "");
+            person.setName(name);
+            person.setEmail(email);
             person.setParseId(parseObject.getObjectId());
             return person;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public Outing getOuting(ParseObject parseOuting, ArrayList<ParseObject> parseOutingBuddies) {
+        if (parseOuting.getClassName().equals(PARSE_TABLE_OUTING)) {
+            Outing outing = OutingRepository.getOutingByParseId(managerContext, parseOuting.getObjectId());
+            if (outing == null) {
+                outing = new Outing();
+            }
+            String title = parseOuting.getString(PARSE_KEY_OUTING_NAME);
+            ArrayList<Person> outingBuddies = new ArrayList<>();
+            for (ParseObject parseOutingBuddy : parseOutingBuddies) {
+                Person outingBuddy = getPerson(parseOutingBuddy);
+                outingBuddies.add(outingBuddy);
+            }
+            outing.setTitle(title);
+            outing.setPersons(outingBuddies);
+            outing.setParseId(parseOuting.getObjectId());
+            return outing;
+        }
+        else {
+            return null;
+        }
+    }
+
+    public Expense getExpense(ParseObject parseExpense, ArrayList<ParseObject> parseExpensePersons, Outing outing) {
+        if (parseExpense.getClassName().equals(PARSE_TABLE_EXPENSE)) {
+            Expense expense = ExpenseRepository.getExpenseByParseId(managerContext, parseExpense.getObjectId());
+            if (expense == null) {
+                expense = new Expense();
+            }
+            ParseObject parseExpenseBy = parseExpense.getParseObject(PARSE_KEY_EXPENSE_EXPENSE_BY);
+            Person expenseBy = getPerson(parseExpenseBy);
+            expense.setExpenseBy(expenseBy);
+            ArrayList<Person> expenseFor = new ArrayList<>();
+            for (ParseObject parseExpenseFor : parseExpensePersons) {
+                Person expensePerson = getPerson(parseExpenseFor);
+                expenseFor.add(expensePerson);
+            }
+            expense.setExpenseFor(expenseFor);
+            int amount = parseExpense.getInt(PARSE_KEY_EXPENSE_AMOUNT);
+            expense.setAmount(amount);
+            expense.setOuting(outing);
+            String description = parseExpense.getString(PARSE_KEY_EXPENSE_DESCRIPTION);
+            expense.setDescription(description);
+            String note = parseExpense.getString(PARSE_KEY_EXPENSE_NOTE);
+            expense.setNote(note);
+            expense.setParseId(parseExpense.getObjectId());
+            return expense;
         }
         else {
             return null;

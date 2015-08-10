@@ -66,6 +66,19 @@ public class PersonRepository extends BaseRepository {
         return null;
     }
 
+    public static Person getPersonByParseId(Context context, String parseId) {
+        ArrayList<Person> persons = new ArrayList<>();
+        SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
+        List<String> clauses = new ArrayList<String>();
+        String clause = KEY_PARSE_ID + "=" + "'" + parseId + "'";
+        clauses.add(clause);
+        List<Object> personObjects = sqLiteImplementation.getObjectsFromClassWithClauses(Person.class, clauses);
+        if (personObjects != null && personObjects.size() > 0) {
+            return (Person) personObjects.get(0);
+        }
+        return null;
+    }
+
     public static void clearTable(Context context) {
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         sqLiteImplementation.deleteAllObjectsFromClass(TABLE_NAME);

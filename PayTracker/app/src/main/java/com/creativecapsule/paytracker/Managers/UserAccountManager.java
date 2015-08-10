@@ -81,8 +81,16 @@ public class UserAccountManager {
                 if (status) {
                     loggedIn = true;
                     saveLoggedInUser();
+                    downloadUserData(new UserAccountManagerListener() {
+                        @Override
+                        public void completed(boolean status) {
+                            callbackListener.completed(status);
+                        }
+                    });
                 }
-                callbackListener.completed(status);
+                else {
+                    callbackListener.completed(status);
+                }
             }
         });
     }
@@ -96,6 +104,15 @@ public class UserAccountManager {
                     emailRegistered = true;
                     saveLoggedInUser();
                 }
+                callbackListener.completed(status);
+            }
+        });
+    }
+
+    public void downloadUserData(final UserAccountManagerListener callbackListener) {
+        ParseDataManager.getSharedManager().downloadUserData(getLoggedInPerson(), new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
                 callbackListener.completed(status);
             }
         });

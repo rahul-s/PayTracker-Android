@@ -81,6 +81,11 @@ public class HomeActivity extends BaseActivity implements AdapterView.OnItemClic
             showNewOutingDialog();
             return true;
         }
+        if (id == R.id.action_reload) {
+            //Add Outings
+            reloadUserData();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -197,8 +202,7 @@ public class HomeActivity extends BaseActivity implements AdapterView.OnItemClic
                 if (status) {
                     newOutingDialog2.dismiss();
                     reloadOutingsList();
-                }
-                else {
+                } else {
                     Toast.makeText(HomeActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
                 }
             }
@@ -219,6 +223,20 @@ public class HomeActivity extends BaseActivity implements AdapterView.OnItemClic
         outings = ExpenseManager.getSharedInstance().getOutings();
         outingsAdapter.setOutings(outings);
         outingsAdapter.notifyDataSetChanged();
+    }
+
+    private void reloadUserData() {
+        UserAccountManager.getSharedManager().downloadUserData(new UserAccountManager.UserAccountManagerListener() {
+            @Override
+            public void completed(boolean status) {
+                if (status) {
+                    reloadOutingsList();
+                }
+                else {
+                    Toast.makeText(HomeActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private String[] getBuddiesNamesArray() {

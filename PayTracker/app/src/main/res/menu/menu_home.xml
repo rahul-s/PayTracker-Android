@@ -1,10 +1,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".HomeActivity">
-    <item android:id="@+id/action_buddies" android:title="@string/action_buddies"
-        android:icon="@android:drawable/ic_input_get"
-        android:orderInCategory="100" app:showAsAction="always" />
     <item android:id="@+id/action_add_outing" android:title="@string/action_add"
         android:icon="@android:drawable/ic_menu_add"
-        android:orderInCategory="100" app:showAsAction="always" />
+        android:orderInCategory="101" app:showAsAction="always" />
+    <item android:id="@+id/action_buddies" android:title="@string/action_buddies"
+        android:icon="@android:drawable/ic_input_get"
+        android:orderInCategory="102" app:showAsAction="never" />
+    <item android:id="@+id/action_reload" android:title="@string/action_reload"
+        android:orderInCategory="103" app:showAsAction="never" />
 </menu>
