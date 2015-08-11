@@ -48,6 +48,15 @@ public class ExpenseManager {
         });
     }
 
+    public void shareOuting(Outing outing, Person person, final ExpenseManagerListener callbackListener) {
+        ParseDataManager.getSharedManager().shareOuting(outing, person, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                callbackListener.completed(status);
+            }
+        });
+    }
+
     public Expense getExpense(int expenseId) {
         return ExpenseRepository.getExpense(managerContext, expenseId);
     }

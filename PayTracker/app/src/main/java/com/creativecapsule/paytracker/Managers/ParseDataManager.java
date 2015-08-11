@@ -330,6 +330,47 @@ public class ParseDataManager {
         }
     }
 
+    public void shareOuting(final Outing outing, final Person person, final ParseDataManagerListener callbackListener) {
+        ParseObject parseOuting = getParseObject(outing);
+        ParseObject parseOwner = getParseObject(person);
+        ParseQuery<ParseObject> outingOwnerQuery = new ParseQuery<ParseObject>(PARSE_TABLE_OUTING_OWNER);
+        outingOwnerQuery.whereEqualTo(PARSE_KEY_OUTING_OWNER_OUTING, parseOuting);
+        outingOwnerQuery.whereEqualTo(PARSE_KEY_OUTING_OWNER_OWNER, parseOwner);
+        outingOwnerQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    if (list == null || list.size() == 0) {
+                        confirmShareOuting(outing, person, callbackListener);
+                    } else {
+                        callbackListener.completed(true, false);
+                    }
+                } else {
+                    callbackListener.completed(false, true);
+                }
+            }
+        });
+    }
+
+    public void confirmShareOuting(Outing outing, Person person, final ParseDataManagerListener callbackListener) {
+        ParseObject parseOutingOwner = new ParseObject(PARSE_TABLE_OUTING_OWNER);
+        ParseObject parseOuting = getParseObject(outing);
+        ParseObject parseOwner = getParseObject(person);
+        parseOutingOwner.put(PARSE_KEY_OUTING_OWNER_OUTING, parseOuting);
+        parseOutingOwner.put(PARSE_KEY_OUTING_OWNER_OWNER, parseOwner);
+        parseOutingOwner.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    callbackListener.completed(true, false);
+                }
+                else {
+                    callbackListener.completed(false, true);
+                }
+            }
+        });
+    }
+
     public void saveOuting(Outing outing, final ParseDataManagerListener callbackListener) {
         SaveOutingTask saveOutingTask = new SaveOutingTask(outing, new SaveOutingTask.TaskCompletedListener() {
             @Override

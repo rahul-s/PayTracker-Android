@@ -9,4 +9,6 @@
         android:orderInCategory="101" />
     <item android:id="@+id/action_show_outstandings" android:title="@string/action_view_outstandings"
         android:orderInCategory="102" />
+    <item android:id="@+id/action_share_outing" android:title="@string/action_share_outing"
+        android:orderInCategory="103" />
 </menu>

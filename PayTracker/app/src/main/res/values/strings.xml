@@ -14,6 +14,7 @@
     <string name="action_reload">Refresh</string>
     <string name="action_view_expenses">View Expenses</string>
     <string name="action_view_outstandings">View Outstandings</string>
+    <string name="action_share_outing">Share</string>
     <string name="title_activity_buddies">Buddies</string>
     <string name="title_activity_outing_details">OutingDetails</string>
     <string name="title_activity_new_expense">NewExpense</string>
@@ -32,6 +33,7 @@
     <string name="label_cancel">Cancel</string>
     <string name="label_edit">Edit</string>
     <string name="label_delete">Delete</string>
+    <string name="label_share">Share</string>
     <string name="dialog_title_new_buddy">New Friend</string>
     <string name="dialog_title_select_buddy">Select Friends</string>
     <string name="dialog_title_new_outing">New Outing</string>
@@ -51,6 +53,8 @@
     <string name="alert_no_more_buddies">All friends are already added.</string>
     <string name="alert_incorrect_amount">Please input a proper amount.</string>
     <string name="alert_select_people">Please select at least one person for the expense.</string>
+    <string name="alert_select_people_share">Please select person to share.</string>
+    <string name="alert_shared_success">Outing shared successfully.</string>
 
     <string name="placeholder_no_outstandings">No outstandings!</string>
     <string name="title_activity_launch">LaunchActivity</string>
