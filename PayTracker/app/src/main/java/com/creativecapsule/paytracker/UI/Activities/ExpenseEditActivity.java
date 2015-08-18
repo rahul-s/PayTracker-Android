@@ -17,10 +17,11 @@ import com.creativecapsule.paytracker.Models.Expense;
 import com.creativecapsule.paytracker.Models.Outing;
 import com.creativecapsule.paytracker.Models.Person;
 import com.creativecapsule.paytracker.R;
+import com.creativecapsule.paytracker.Utility.Common;
 
 import java.util.ArrayList;
 
-public class ExpenseActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
+public class ExpenseEditActivity extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
     public static final String BUNDLE_KEY_OUTING_ID = "outing_id";
     public static final String BUNDLE_KEY_EXPENSE_ID = "expense_id";
@@ -65,7 +66,7 @@ public class ExpenseActivity extends BaseActivity implements AdapterView.OnItemS
 
         //For Listview
         forBuddiesLV = (ListView) findViewById(R.id.expense_for_list);
-        ArrayAdapter<String> buddiesAdapter = new ArrayAdapter<String>(ExpenseActivity.this, android.R.layout.simple_list_item_multiple_choice, getOutingBuddiesNamesArray());
+        ArrayAdapter<String> buddiesAdapter = new ArrayAdapter<String>(ExpenseEditActivity.this, android.R.layout.simple_list_item_multiple_choice, getOutingBuddiesNamesArray());
         forBuddiesLV.setAdapter(buddiesAdapter);
         forBuddiesLV.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
@@ -173,13 +174,15 @@ public class ExpenseActivity extends BaseActivity implements AdapterView.OnItemS
         }
 
         // save
+        Common.showLoadingDialog(this);
         ExpenseManager.getSharedInstance().saveExpense(this.newExpense, new ExpenseManager.ExpenseManagerListener() {
             @Override
             public void completed(boolean status) {
+                Common.hideLoadingDialog();
                 if (status) {
                     finish();
                 } else {
-                    Toast.makeText(ExpenseActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ExpenseEditActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
                     return;
                 }
             }

@@ -144,9 +144,9 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
     @Override
     public void editExpense(int index) {
         Expense expense = this.outingExpenses.get(index);
-        Intent newExpenseIntent = new Intent(this, ExpenseActivity.class);
-        newExpenseIntent.putExtra(ExpenseActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
-        newExpenseIntent.putExtra(ExpenseActivity.BUNDLE_KEY_EXPENSE_ID, expense.getIdentifier());
+        Intent newExpenseIntent = new Intent(this, ExpenseEditActivity.class);
+        newExpenseIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
+        newExpenseIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_EXPENSE_ID, expense.getIdentifier());
         startActivity(newExpenseIntent);
     }
 
@@ -300,8 +300,8 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
     }
 
     private void addExpense() {
-        Intent newExpenseIntent = new Intent(this, ExpenseActivity.class);
-        newExpenseIntent.putExtra(ExpenseActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
+        Intent newExpenseIntent = new Intent(this, ExpenseEditActivity.class);
+        newExpenseIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
         startActivity(newExpenseIntent);
     }
 
@@ -311,7 +311,7 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
 
     private void showOutstandings() {
         Intent outstandingsIntent = new Intent(this, OutStandingsActivity.class);
-        outstandingsIntent.putExtra(ExpenseActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
+        outstandingsIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
         startActivity(outstandingsIntent);
     }
 
