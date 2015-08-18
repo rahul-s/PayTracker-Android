@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.creativecapsule.paytracker.Managers.UserAccountManager;
 import com.creativecapsule.paytracker.R;
+import com.creativecapsule.paytracker.Utility.Common;
 
 public class AccountSetupActivity extends BaseActivity implements View.OnClickListener {
 
@@ -54,9 +55,11 @@ public class AccountSetupActivity extends BaseActivity implements View.OnClickLi
                 Toast.makeText(this, getResources().getString(R.string.alert_passwords_empty), Toast.LENGTH_SHORT).show();
                 return;
             }
+            Common.showLoadingDialog(this);
             UserAccountManager.getSharedManager().loginUser(password, new UserAccountManager.UserAccountManagerListener() {
                 @Override
                 public void completed(boolean status) {
+                    Common.hideLoadingDialog();
                     if (status) {
                         accountSetupCompleted();
                     }
@@ -85,9 +88,11 @@ public class AccountSetupActivity extends BaseActivity implements View.OnClickLi
                 return;
             }
 
+            Common.showLoadingDialog(this);
             UserAccountManager.getSharedManager().registerUser(name, password, new UserAccountManager.UserAccountManagerListener() {
                 @Override
                 public void completed(boolean status) {
+                    Common.hideLoadingDialog();
                     if (status) {
                         accountSetupCompleted();
                     }

@@ -25,6 +25,7 @@ import com.creativecapsule.paytracker.Models.Person;
 import com.creativecapsule.paytracker.R;
 import com.creativecapsule.paytracker.UI.Adapters.ExpenseAdapter;
 import com.creativecapsule.paytracker.UI.Adapters.PersonsAdapter;
+import com.creativecapsule.paytracker.Utility.Common;
 
 import java.util.ArrayList;
 
@@ -281,9 +282,11 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
             }
         }
         this.outing.addPersons(selectedPeople);
+        Common.showLoadingDialog(this);
         ExpenseManager.getSharedInstance().saveOuting(this.outing, new ExpenseManager.ExpenseManagerListener() {
             @Override
             public void completed(boolean status) {
+                Common.hideLoadingDialog();
                 if (status) {
                     addBuddiesDialog.dismiss();
                     initBuddiesList();
@@ -361,9 +364,11 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
             return;
         }
         else {
+            Common.showLoadingDialog(this);
             ExpenseManager.getSharedInstance().shareOuting(this.outing, selectedPerson, new ExpenseManager.ExpenseManagerListener() {
                 @Override
                 public void completed(boolean status) {
+                    Common.hideLoadingDialog();
                     if (status) {
                         Toast.makeText(OutingDetailsActivity.this, getResources().getString(R.string.alert_shared_success), Toast.LENGTH_SHORT).show();
                     }

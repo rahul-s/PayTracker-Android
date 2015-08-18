@@ -35,12 +35,14 @@ public class InputEmailActivity extends BaseActivity implements View.OnClickList
     }
 
     private void submitEmail() {
+        Common.showLoadingDialog(this);
         EditText emailField = (EditText) findViewById(R.id.email_et);
         String email = emailField.getText().toString();
         if (Common.isValidEmail(email)) {
             UserAccountManager.getSharedManager().submitEmail(email, new UserAccountManager.UserAccountManagerListener() {
                 @Override
                 public void completed(boolean status) {
+                    Common.hideLoadingDialog();
                     if (status) {
                         emailSubmitted();
                     }
@@ -51,6 +53,7 @@ public class InputEmailActivity extends BaseActivity implements View.OnClickList
             });
         }
         else {
+            Common.hideLoadingDialog();
             Toast.makeText(InputEmailActivity.this, getResources().getString(R.string.alert_invalid_email), Toast.LENGTH_SHORT).show();
         }
     }

@@ -114,9 +114,11 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
             return;
         }
         Person newBuddy = new Person(name, email, etNickname.getText().toString());
+        Common.showLoadingDialog(this);
         UserAccountManager.getSharedManager().addPerson(newBuddy, new UserAccountManager.UserAccountManagerListener() {
             @Override
             public void completed(boolean status) {
+                Common.hideLoadingDialog();
                 if (status) {
                     newBuddyDialog.dismiss();
                     reloadBuddyList();
