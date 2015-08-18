@@ -136,7 +136,15 @@ public class OutStandingsAdapter extends SectionHeaderBaseAdapter {
         }
 
         public void addPayment(Pay payment) {
-            outstandingPayments.add(payment);
+            Pay existingPayment = getOutstandingPayment(payment.payTo);
+            if (existingPayment == null) {
+                // create a new pay for this person
+                outstandingPayments.add(payment);
+            }
+            else {
+                // add the amount to the persons existing payment.
+                existingPayment.amount += payment.amount;
+            }
         }
 
         public void removePayment(Pay payment) {
@@ -205,6 +213,8 @@ public class OutStandingsAdapter extends SectionHeaderBaseAdapter {
      * This method removes any cross payments if existing and replaces with a resulting payment from the difference.
      */
     private void optimizeOutStandings() {
+
+        // Clubbing together payments to each others
         for (OutStanding outStandingOne : this.outStandings) {
             for (OutStanding outStandingTwo : this.outStandings) {
                 if (outStandingOne.person.getIdentifier() == outStandingTwo.person.getIdentifier()) {
