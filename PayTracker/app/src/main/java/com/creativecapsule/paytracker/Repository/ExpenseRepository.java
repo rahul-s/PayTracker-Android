@@ -58,6 +58,19 @@ public class ExpenseRepository extends BaseRepository {
         return expenses;
     }
 
+    public static Expense getExpenseByParseId(Context context, String parseId) {
+        ArrayList<Expense> expenses = new ArrayList<>();
+        SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
+        List<String> clauses = new ArrayList<String>();
+        String clause = KEY_PARSE_ID + "=" + "'" + parseId + "'";
+        clauses.add(clause);
+        List<Object> expenseObjects = sqLiteImplementation.getObjectsFromClassWithClauses(Expense.class, clauses);
+        if (expenseObjects.size() > 0) {
+            return (Expense)expenseObjects.get(0);
+        }
+        else return null;
+    }
+
     public static Expense getExpense(Context context, int expenseId) {
         Expense expense;
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);

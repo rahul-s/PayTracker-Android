@@ -9,4 +9,5 @@ public class BaseRepository {
     protected static int DATABASE_VERSION = 1;
 
     protected static final String KEY_OBJECT_ID = "identifier";
+    protected static final String KEY_PARSE_ID = "parseId";
 }

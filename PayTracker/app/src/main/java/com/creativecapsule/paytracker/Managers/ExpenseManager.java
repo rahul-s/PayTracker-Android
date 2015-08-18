@@ -38,8 +38,23 @@ public class ExpenseManager {
         return OutingRepository.getOutings(managerContext);
     }
 
-    public void saveOuting(Outing outing) {
-        OutingRepository.save(managerContext, outing);
+    public void saveOuting(Outing outing, final ExpenseManagerListener callbackListener) {
+        //OutingRepository.save(managerContext, outing);
+        ParseDataManager.getSharedManager().saveOuting(outing, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                callbackListener.completed(status);
+            }
+        });
+    }
+
+    public void shareOuting(Outing outing, Person person, final ExpenseManagerListener callbackListener) {
+        ParseDataManager.getSharedManager().shareOuting(outing, person, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                callbackListener.completed(status);
+            }
+        });
     }
 
     public Expense getExpense(int expenseId) {
@@ -50,25 +65,32 @@ public class ExpenseManager {
         return ExpenseRepository.getExpenses(managerContext, outing);
     }
 
-    public void saveExpense(Expense expense) {
-        ExpenseRepository.save(managerContext, expense);
+    public void saveExpense(Expense expense, final ExpenseManagerListener callbackListener) {
+        //ExpenseRepository.save(managerContext, expense);
+        ParseDataManager.getSharedManager().saveExpense(expense, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                callbackListener.completed(status);
+            }
+        });
     }
 
-    public void deleteExpense(int expenseId) {
-        ExpenseRepository.deleteExpense(managerContext, expenseId);
-    }
-
-    public ArrayList<Person> getOutingBuddies(int outingId) {
-        return PersonRepository.getOutingPersons(managerContext, outingId);
-    }
-
-    public ArrayList<Person> getPersons() {
-        return PersonRepository.getPersons(managerContext);
-    }
-
-    public void savePerson(Person person) {
-        PersonRepository.save(managerContext, person);
+    public void deleteExpense(final int expenseId, final ExpenseManagerListener callbackListener) {
+        Expense expense = getExpense(expenseId);
+        ParseDataManager.getSharedManager().deleteExpense(expense, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                if (status) {
+                    ExpenseRepository.deleteExpense(managerContext, expenseId);
+                }
+                callbackListener.completed(status);
+            }
+        });
     }
 
     //endregion
+
+    public interface ExpenseManagerListener {
+        void completed(boolean status);
+    }
 }

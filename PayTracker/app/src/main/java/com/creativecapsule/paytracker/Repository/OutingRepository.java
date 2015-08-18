@@ -63,6 +63,22 @@ public class OutingRepository extends BaseRepository {
         }
     }
 
+    public static Outing getOutingByParseId(Context context, String parseId) {
+        SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
+
+        List<String> clauses = new ArrayList<String>();
+        String clause = KEY_PARSE_ID + "=" + "'" + parseId + "'";
+        clauses.add(clause);
+
+        List<Object> outings = sqLiteImplementation.getObjectsFromClassWithClauses(Outing.class,clauses);
+        if (outings != null && outings.size() > 0) {
+            return (Outing) outings.get(0);
+        }
+        else {
+            return null;
+        }
+    }
+
     public static void clearTable(Context context) {
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         sqLiteImplementation.deleteAllObjectsFromClass(TABLE_NAME);

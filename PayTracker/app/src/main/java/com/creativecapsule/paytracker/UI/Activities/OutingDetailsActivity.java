@@ -18,12 +18,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.creativecapsule.paytracker.Managers.ExpenseManager;
+import com.creativecapsule.paytracker.Managers.UserAccountManager;
 import com.creativecapsule.paytracker.Models.Expense;
 import com.creativecapsule.paytracker.Models.Outing;
 import com.creativecapsule.paytracker.Models.Person;
 import com.creativecapsule.paytracker.R;
 import com.creativecapsule.paytracker.UI.Adapters.ExpenseAdapter;
 import com.creativecapsule.paytracker.UI.Adapters.PersonsAdapter;
+import com.creativecapsule.paytracker.Utility.Common;
 
 import java.util.ArrayList;
 
@@ -39,10 +41,12 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
     private int activeTab;
     private PersonsAdapter outingBuddiesAdapter;
     private ExpenseAdapter outingExpenseAdapter;
-    private ArrayList<Person> outingBuddies, otherBuddies;
+    private ArrayList<Person> outingBuddies, otherBuddies, shareBuddies;
     private ArrayList<Expense> outingExpenses;
     private Dialog addBuddiesDialog;
     private View addBuddiesDialogView;
+    private Dialog shareOutingDialog;
+    private View shareOutingDialogView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +114,10 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
             showOutstandings();
             return true;
         }
+        if (id == R.id.action_share_outing) {
+            showShareOutingDialog();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -136,9 +144,9 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
     @Override
     public void editExpense(int index) {
         Expense expense = this.outingExpenses.get(index);
-        Intent newExpenseIntent = new Intent(this, ExpenseActivity.class);
-        newExpenseIntent.putExtra(ExpenseActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
-        newExpenseIntent.putExtra(ExpenseActivity.BUNDLE_KEY_EXPENSE_ID, expense.getIdentifier());
+        Intent newExpenseIntent = new Intent(this, ExpenseEditActivity.class);
+        newExpenseIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
+        newExpenseIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_EXPENSE_ID, expense.getIdentifier());
         startActivity(newExpenseIntent);
     }
 
@@ -153,10 +161,19 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO: delete expense.
                         Expense expense = outingExpenses.get(index);
-                        ExpenseManager.getSharedInstance().deleteExpense(expense.getIdentifier());
-                        initExpenseList();
-                        initBuddiesList();
-                        showTab(activeTab);
+                        ExpenseManager.getSharedInstance().deleteExpense(expense.getIdentifier(), new ExpenseManager.ExpenseManagerListener() {
+                            @Override
+                            public void completed(boolean status) {
+                                if (status) {
+                                    initExpenseList();
+                                    initBuddiesList();
+                                    showTab(activeTab);
+                                }
+                                else {
+                                    Toast.makeText(OutingDetailsActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     }
                 })
                 .setNegativeButton(R.string.dialog_confirm_delete_no, null)
@@ -205,10 +222,15 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
 
     private void initOtherBuddies() {
         otherBuddies = new ArrayList<>();
-        ArrayList<Person> allBuddies = ExpenseManager.getSharedInstance().getPersons();
+        shareBuddies = new ArrayList<>();
+        Person mySelf = UserAccountManager.getSharedManager().getLoggedInPerson();
+        ArrayList<Person> allBuddies = UserAccountManager.getSharedManager().getPersons();
         for (Person buddy : allBuddies) {
             if (!this.outing.isPersonIncluded(buddy)) {
                 otherBuddies.add(buddy);
+            }
+            if (!(buddy.getIdentifier() == mySelf.getIdentifier())) {
+                shareBuddies.add(buddy);
             }
         }
     }
@@ -252,7 +274,6 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
     }
 
     private void addBuddySave() {
-        addBuddiesDialog.dismiss();
         ArrayList<Person> selectedPeople = new ArrayList<>();
         ListView buddiesListView = (ListView) addBuddiesDialogView.findViewById(R.id.people_select_list);
         for (int i=0 ; i<this.otherBuddies.size() ; i++) {
@@ -261,32 +282,121 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
             }
         }
         this.outing.addPersons(selectedPeople);
-        ExpenseManager.getSharedInstance().saveOuting(this.outing);
-        initBuddiesList();
-        initOtherBuddies();
-        showTab(activeTab);
+        Common.showLoadingDialog(this);
+        ExpenseManager.getSharedInstance().saveOuting(this.outing, new ExpenseManager.ExpenseManagerListener() {
+            @Override
+            public void completed(boolean status) {
+                Common.hideLoadingDialog();
+                if (status) {
+                    addBuddiesDialog.dismiss();
+                    initBuddiesList();
+                    initOtherBuddies();
+                    showTab(activeTab);
+                } else {
+                    Toast.makeText(OutingDetailsActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private void addExpense() {
-        Intent newExpenseIntent = new Intent(this, ExpenseActivity.class);
-        newExpenseIntent.putExtra(ExpenseActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
+        Intent newExpenseIntent = new Intent(this, ExpenseEditActivity.class);
+        newExpenseIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
         startActivity(newExpenseIntent);
     }
 
     private void showExpenses() {
-
+        Intent expenseIntent = new Intent(this, ExpenseListActivity.class);
+        expenseIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
+        startActivity(expenseIntent);
     }
 
     private void showOutstandings() {
         Intent outstandingsIntent = new Intent(this, OutStandingsActivity.class);
-        outstandingsIntent.putExtra(ExpenseActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
+        outstandingsIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
         startActivity(outstandingsIntent);
+    }
+
+    private void showShareOutingDialog() {
+        shareOutingDialog = new Dialog(this);
+        shareOutingDialog.setCancelable(false);
+        shareOutingDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        shareOutingDialogView = inflater.inflate(R.layout.dialog_select_people, null, false);
+
+        ListView buddiesListView = (ListView) shareOutingDialogView.findViewById(R.id.people_select_list);
+        ArrayAdapter<String> buddiesAdapter = new ArrayAdapter<String>(OutingDetailsActivity.this, android.R.layout.simple_list_item_multiple_choice, getShareBuddiesNamesArray());
+        buddiesListView.setAdapter(buddiesAdapter);
+        buddiesListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        Button saveOutingBtn = (Button) shareOutingDialogView.findViewById(R.id.new_outing_2_save);
+        saveOutingBtn.setText(getResources().getString(R.string.label_share));
+        saveOutingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareOuting();
+            }
+        });
+
+        Button cancelOutingBtn = (Button) shareOutingDialogView.findViewById(R.id.new_outing_2_cancel);
+        cancelOutingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareOutingDialog.dismiss();
+            }
+        });
+
+        shareOutingDialog.setContentView(shareOutingDialogView);
+        shareOutingDialog.show();
+    }
+
+    private void shareOuting() {
+        Person selectedPerson = null;
+        ListView buddiesListView = (ListView) shareOutingDialogView.findViewById(R.id.people_select_list);
+        for (int i=0 ; i<this.shareBuddies.size() ; i++) {
+            if (buddiesListView.getCheckedItemPositions().get(i)) {
+                selectedPerson = this.shareBuddies.get(i);
+            }
+        }
+
+        if (selectedPerson == null) {
+            //No selection
+            Toast.makeText(OutingDetailsActivity.this, getResources().getString(R.string.alert_select_people_share), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else {
+            Common.showLoadingDialog(this);
+            ExpenseManager.getSharedInstance().shareOuting(this.outing, selectedPerson, new ExpenseManager.ExpenseManagerListener() {
+                @Override
+                public void completed(boolean status) {
+                    Common.hideLoadingDialog();
+                    if (status) {
+                        Toast.makeText(OutingDetailsActivity.this, getResources().getString(R.string.alert_shared_success), Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(OutingDetailsActivity.this, getResources().getString(R.string.alert_failed_task), Toast.LENGTH_SHORT).show();
+                    }
+                    shareOutingDialog.dismiss();
+                }
+            });
+        }
     }
 
     private String[] getOtherBuddiesNamesArray() {
         String[] names = new String[otherBuddies.size()];
         int i=0 ;
         for (Person buddy : otherBuddies) {
+            names[i] = buddy.getName();
+            i++;
+        }
+        return names;
+    }
+
+    private String[] getShareBuddiesNamesArray() {
+        String[] names = new String[shareBuddies.size()];
+        int i=0 ;
+        for (Person buddy : shareBuddies) {
             names[i] = buddy.getName();
             i++;
         }

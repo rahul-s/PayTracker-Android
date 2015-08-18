@@ -1,5 +1,6 @@
 package com.creativecapsule.paytracker.Utility;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.util.Log;
 import android.util.Patterns;
@@ -29,6 +30,8 @@ public class Common {
 
     private final static long SEVEN_DAYS_MILLISEC = 7 * 24 * 60 * 60 * 1000;
     public static String filePathInDirectory = "/downloadedFiles";
+
+    private static Dialog loadingIndicatorDialog;
 
     /**
      * Gives current date time in string format
@@ -236,5 +239,14 @@ public class Common {
         catch(Exception ex){}
     }
 
+    public static void showLoadingDialog(Context context) {
+        loadingIndicatorDialog = new Dialog(context);
+        loadingIndicatorDialog.setTitle("Please wait...");
+        loadingIndicatorDialog.show();
+    }
+
+    public static void hideLoadingDialog() {
+        loadingIndicatorDialog.dismiss();
+    }
 
 }

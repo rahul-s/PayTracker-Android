@@ -17,6 +17,7 @@ public class PersonRepository extends BaseRepository {
     private static final String TABLE_NAME = "Person";
 
     private static final String COLUMN_KEY_OUTING = "outing";
+    private static final String COLUMN_KEY_EMAIL = "email";
 
     public static boolean save (Context context, Person person){
 
@@ -52,17 +53,30 @@ public class PersonRepository extends BaseRepository {
     }
 
     //TODO: change this to fetch from the Outings table
-    public static ArrayList<Person> getOutingPersons(Context context, int outingId) {
+    public static Person getPerson(Context context, String emailId) {
         ArrayList<Person> persons = new ArrayList<>();
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         List<String> clauses = new ArrayList<String>();
-        String clause = COLUMN_KEY_OUTING + "=" + "'" + outingId + "'";
+        String clause = COLUMN_KEY_EMAIL + "=" + "'" + emailId + "'";
         clauses.add(clause);
         List<Object> personObjects = sqLiteImplementation.getObjectsFromClassWithClauses(Person.class, clauses);
-        for (int i = 0; i < personObjects.size(); i++) {
-            persons.add((Person) personObjects.get(i));
+        if (personObjects != null && personObjects.size() > 0) {
+            return (Person) personObjects.get(0);
         }
-        return persons;
+        return null;
+    }
+
+    public static Person getPersonByParseId(Context context, String parseId) {
+        ArrayList<Person> persons = new ArrayList<>();
+        SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
+        List<String> clauses = new ArrayList<String>();
+        String clause = KEY_PARSE_ID + "=" + "'" + parseId + "'";
+        clauses.add(clause);
+        List<Object> personObjects = sqLiteImplementation.getObjectsFromClassWithClauses(Person.class, clauses);
+        if (personObjects != null && personObjects.size() > 0) {
+            return (Person) personObjects.get(0);
+        }
+        return null;
     }
 
     public static void clearTable(Context context) {

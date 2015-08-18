@@ -10,6 +10,15 @@
         android:textSize="@dimen/dialog_title_size"
         android:textColor="@color/text_color_dark"/>
     <EditText
+        android:id="@+id/new_buddy_email"
+        android:layout_width="@dimen/dialog_input_width"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/list_item_internal_margin_small"
+        android:gravity="center"
+        android:hint="@string/label_email"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/text_color_light"/>
+    <EditText
         android:id="@+id/new_buddy_name"
         android:layout_width="@dimen/dialog_input_width"
         android:layout_height="wrap_content"
