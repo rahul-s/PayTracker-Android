@@ -57,9 +57,12 @@
     <string name="alert_shared_success">Outing shared successfully.</string>
 
     <string name="placeholder_no_outstandings">No outstandings!</string>
-    <string name="title_activity_launch">LaunchActivity</string>
+    <string name="title_activity_launch">PayTracker</string>
     <string name="title_activity_input_email">InputEmailActivity</string>
-
-    <string name="hello_world">Hello world!</string>
     <string name="title_activity_account_setup">AccountSetupActivity</string>
+
+    <string name="placeholder_no_expenses">No expenses!</string>
+    <string name="title_activity_expense_list">ExpenseListActivity</string>
+    <string name="label_expense_person_cost">Cost</string>
+    <string name="label_expense_person_spent">Spent</string>
 </resources>

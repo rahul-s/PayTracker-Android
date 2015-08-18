@@ -16,6 +16,7 @@
         android:layout_margin="@dimen/list_item_internal_margin_small"
         android:gravity="center"
         android:hint="@string/label_email"
+        android:inputType="textEmailAddress"
         android:textColor="@color/text_color_light"/>
     <EditText
         android:id="@+id/new_buddy_name"

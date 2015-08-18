@@ -306,7 +306,9 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
     }
 
     private void showExpenses() {
-
+        Intent expenseIntent = new Intent(this, ExpenseListActivity.class);
+        expenseIntent.putExtra(ExpenseEditActivity.BUNDLE_KEY_OUTING_ID, this.outing.getIdentifier());
+        startActivity(expenseIntent);
     }
 
     private void showOutstandings() {
