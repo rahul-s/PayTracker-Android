@@ -10,5 +10,6 @@ public class Constants {
 
     public static final String SHARED_PREFERENCE_USER_CREDENTIALS = "user_credentials";
     public static final String SHARED_PREFERENCE_KEY_EMAIL = "user_email";
+    public static final String SHARED_PREFERENCE_KEY_PHONE_NUMBER = "phoneNumber";
 
 }

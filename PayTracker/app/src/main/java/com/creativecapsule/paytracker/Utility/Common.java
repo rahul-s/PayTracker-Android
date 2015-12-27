@@ -213,6 +213,15 @@ public class Common {
         return Patterns.EMAIL_ADDRESS.matcher(emailId).matches();
     }
 
+    public static boolean isValidPhoneNumber(String number) {
+        if (number != null && number.length() == 10) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     /*
     *Validate a password
     *@return password valid boolean

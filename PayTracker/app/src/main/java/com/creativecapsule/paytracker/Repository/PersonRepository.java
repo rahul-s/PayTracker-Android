@@ -17,6 +17,7 @@ public class PersonRepository extends BaseRepository {
     private static final String TABLE_NAME = "Person";
 
     private static final String COLUMN_KEY_OUTING = "outing";
+    private static final String COLUMN_KEY_PHONE_NUMBER = "phoneNumber";
     private static final String COLUMN_KEY_EMAIL = "email";
 
     public static boolean save (Context context, Person person){
@@ -53,11 +54,11 @@ public class PersonRepository extends BaseRepository {
     }
 
     //TODO: change this to fetch from the Outings table
-    public static Person getPerson(Context context, String emailId) {
+    public static Person getPerson(Context context, String phoneNumber) {
         ArrayList<Person> persons = new ArrayList<>();
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         List<String> clauses = new ArrayList<String>();
-        String clause = COLUMN_KEY_EMAIL + "=" + "'" + emailId + "'";
+        String clause = COLUMN_KEY_PHONE_NUMBER + "=" + "'" + phoneNumber + "'";
         clauses.add(clause);
         List<Object> personObjects = sqLiteImplementation.getObjectsFromClassWithClauses(Person.class, clauses);
         if (personObjects != null && personObjects.size() > 0) {

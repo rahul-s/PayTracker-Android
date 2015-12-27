@@ -1,11 +1,11 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="AppThemeDialog" parent="Theme.AppCompat.Dialog">
+    <style name="AppThemeDialog" parent="Base.Theme.AppCompat.Dialog">
         <!-- Customize your theme here. -->
         <item name="android:actionBarStyle">@style/AppBar</item>
     </style>

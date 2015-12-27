@@ -19,7 +19,8 @@ public class UserAccountManager {
     private Context managerContext;
 
     private String email;
-    private boolean emailRegistered;
+    private String phoneNumber;
+    private boolean phoneRegistered;
     private boolean loggedIn;
 
     public static UserAccountManager getSharedManager() {
@@ -29,14 +30,16 @@ public class UserAccountManager {
     private UserAccountManager() {
         this.managerContext = PayTrackerApplication.getAppContext();
         email = "";
-        emailRegistered = false;
+        phoneNumber = "";
+        phoneRegistered = false;
         validateLoggedInUser();
     }
 
     private void validateLoggedInUser() {
         SharedPreferences prefs = this.managerContext.getSharedPreferences(Constants.SHARED_PREFERENCE_USER_CREDENTIALS, this.managerContext.MODE_PRIVATE);
         email = prefs.getString(Constants.SHARED_PREFERENCE_KEY_EMAIL, "");
-        if (email.equals("")) {
+        phoneNumber = prefs.getString(Constants.SHARED_PREFERENCE_KEY_PHONE_NUMBER, "");
+        if (phoneNumber.equals("")) {
             loggedIn = false;
         }
         else {
@@ -47,6 +50,7 @@ public class UserAccountManager {
     private void saveLoggedInUser() {
         SharedPreferences.Editor editor = this.managerContext.getSharedPreferences(Constants.SHARED_PREFERENCE_USER_CREDENTIALS, this.managerContext.MODE_PRIVATE).edit();
         editor.putString(Constants.SHARED_PREFERENCE_KEY_EMAIL, email);
+        editor.putString(Constants.SHARED_PREFERENCE_KEY_PHONE_NUMBER, phoneNumber);
         editor.commit();
     }
 
@@ -57,9 +61,25 @@ public class UserAccountManager {
             public void completed(boolean status, boolean error) {
                 if (!error) {
                     email = inputEmail;
-                    emailRegistered = status;
+                    phoneRegistered = status;
                     callbackListener.completed(true);
                 } else {
+                    callbackListener.completed(false);
+                }
+            }
+        });
+    }
+
+    public void submitPhoneNumber(final String inputNumber, final UserAccountManagerListener callbackListener) {
+        ParseDataManager.getSharedManager().isPhoneNumberRegistered(inputNumber, new ParseDataManager.ParseDataManagerListener() {
+            @Override
+            public void completed(boolean status, boolean error) {
+                if (!error) {
+                    phoneNumber = inputNumber;
+                    phoneRegistered = status;
+                    callbackListener.completed(true);
+                }
+                else {
                     callbackListener.completed(false);
                 }
             }
@@ -70,12 +90,12 @@ public class UserAccountManager {
         return loggedIn;
     }
 
-    public boolean isEmailRegistered() {
-        return emailRegistered;
+    public boolean isPhoneRegistered() {
+        return phoneRegistered;
     }
 
     public void loginUser(String password, final UserAccountManagerListener callbackListener) {
-        ParseDataManager.getSharedManager().loginPerson(email, password, new ParseDataManager.ParseDataManagerListener() {
+        ParseDataManager.getSharedManager().loginPerson(phoneNumber, password, new ParseDataManager.ParseDataManagerListener() {
             @Override
             public void completed(boolean status, boolean error) {
                 if (status) {
@@ -96,12 +116,12 @@ public class UserAccountManager {
     }
 
     public void registerUser(String name, String password, final UserAccountManagerListener callbackListener) {
-        ParseDataManager.getSharedManager().registerPerson(email, password, name, new ParseDataManager.ParseDataManagerListener() {
+        ParseDataManager.getSharedManager().registerPerson(phoneNumber, password, name, new ParseDataManager.ParseDataManagerListener() {
             @Override
             public void completed(boolean status, boolean error) {
                 if (status) {
                     loggedIn = true;
-                    emailRegistered = true;
+                    phoneRegistered = true;
                     saveLoggedInUser();
                 }
                 callbackListener.completed(status);
@@ -119,7 +139,7 @@ public class UserAccountManager {
     }
 
     public Person getLoggedInPerson() {
-        return PersonRepository.getPerson(managerContext, email);
+        return PersonRepository.getPerson(managerContext, phoneNumber);
     }
 
     public ArrayList<Person> getBuddies() {
@@ -127,7 +147,7 @@ public class UserAccountManager {
         //remove self from buddies.
         for (Iterator<Person> iterator = allPersons.iterator(); iterator.hasNext();) {
             Person person = iterator.next();
-            if (person.getEmail().equals(email)) {
+            if (person.getPhoneNumber().equals(phoneNumber)) {
                 iterator.remove();
             }
         }
