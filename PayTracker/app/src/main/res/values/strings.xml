@@ -39,6 +39,7 @@
     <string name="dialog_title_new_buddy">New Friend</string>
     <string name="dialog_title_select_buddy">Select Friends</string>
     <string name="dialog_title_new_outing">New Outing</string>
+    <string name="dialog_title_select_number">Select Number</string>
     <string name="label_expense_by">By :</string>
     <string name="label_expense_for">For :</string>
     <string name="label_expense_Comments">Comments :</string>

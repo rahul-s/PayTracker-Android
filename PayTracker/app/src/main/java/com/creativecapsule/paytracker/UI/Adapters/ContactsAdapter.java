@@ -1,13 +1,18 @@
 package com.creativecapsule.paytracker.UI.Adapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.creativecapsule.paytracker.Models.Misc.ContactItem;
@@ -22,12 +27,17 @@ public class ContactsAdapter extends BaseAdapter implements Filterable{
 
     private Context context;
     private ArrayList<ContactItem> contactItemsAll, contactItemsFiltered, contactsSelected;
+    private ListView numbersSelectListView;
 
     public ContactsAdapter(ArrayList<ContactItem> contactItems, Context context) {
         this.contactItemsAll = contactItems;
         this.contactItemsFiltered = contactItems;
         this.contactsSelected = new ArrayList<>();
         this.context = context;
+    }
+
+    public ArrayList<ContactItem> getContactsSelected() {
+        return contactsSelected;
     }
 
     @Override
@@ -115,6 +125,72 @@ public class ContactsAdapter extends BaseAdapter implements Filterable{
         };
         return contactsFilter;
     }
+
+    public void contactItemClicked(int row) {
+        ContactItem contactItem = (ContactItem) getItem(row);
+
+        if (contactsSelected.contains(contactItem)) {
+            contactsSelected.remove(contactItem);
+            notifyDataSetChanged();
+        }
+        else {
+            if (contactItem.getContactNumbers().size() == 1) {
+                contactItem.setSelectedContactNumber(contactItem.getContactNumbers().get(0));
+                contactsSelected.add(contactItem);
+                notifyDataSetChanged();
+            }
+            else {
+                // This contact has multiple numbers.
+                showMultipleNumberDialog(contactItem);
+            }
+        }
+    }
+
+    private void showMultipleNumberDialog(final ContactItem contactItem) {
+        final Dialog selectNumberDialog = new Dialog(context);
+        selectNumberDialog.setCancelable(false);
+        selectNumberDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View selectContactDialogView = inflater.inflate(R.layout.dialog_select_contact_number, null, false);
+
+        numbersSelectListView = (ListView) selectContactDialogView.findViewById(R.id.contact_number_select_list);
+        ArrayAdapter<String> buddiesAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_single_choice, contactItem.getContactNumbers());
+        numbersSelectListView.setAdapter(buddiesAdapter);
+        numbersSelectListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        Button saveContactBtn = (Button) selectContactDialogView.findViewById(R.id.contact_number_save);
+        saveContactBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectedNumberSave(contactItem);
+                selectNumberDialog.dismiss();
+            }
+        });
+
+        Button cancelOutingBtn = (Button) selectContactDialogView.findViewById(R.id.contact_number_cancel);
+        cancelOutingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectNumberDialog.dismiss();
+            }
+        });
+
+        selectNumberDialog.setContentView(selectContactDialogView);
+        selectNumberDialog.show();
+    }
+
+    private void selectedNumberSave(ContactItem contactItem) {
+        for (int i=0 ; i<contactItem.getContactNumbers().size() ; i++) {
+            if (numbersSelectListView.getCheckedItemPositions().get(i)) {
+                contactItem.setSelectedContactNumber(contactItem.getContactNumbers().get(i));
+                contactsSelected.add(contactItem);
+                break;
+            }
+        }
+        notifyDataSetChanged();
+    }
+
 
     public class ContactViewHolder {
         public TextView tvContactName, tvContactSelectedNumber;

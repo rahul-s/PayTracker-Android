@@ -6,8 +6,11 @@ import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.creativecapsule.paytracker.Models.Misc.ContactItem;
@@ -16,7 +19,7 @@ import com.creativecapsule.paytracker.UI.Adapters.ContactsAdapter;
 
 import java.util.ArrayList;
 
-public class AddBuddyActivity extends BaseActivity {
+public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
     public static final String DEBUG_TAG = "";
 
@@ -31,8 +34,6 @@ public class AddBuddyActivity extends BaseActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        //fetch contacts and display in a list.
-
         fetchContacts();
         setupContactsListView();
     }
@@ -41,6 +42,7 @@ public class AddBuddyActivity extends BaseActivity {
         if (contactsAdapter == null) {
             contactsAdapter = new ContactsAdapter(contacts, this);
             ListView contactsListView = (ListView) findViewById(R.id.contacts_list);
+            contactsListView.setOnItemClickListener(this);
             contactsListView.setAdapter(contactsAdapter);
         }
     }
@@ -81,6 +83,14 @@ public class AddBuddyActivity extends BaseActivity {
         }
     }
 
+    private void saveSelectedContacts() {
+        Log.d(DEBUG_TAG, "selected numbers :" + contactsAdapter.getContactsSelected().size());
+
+        //Save the buddies.
+
+        finish();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -96,7 +106,16 @@ public class AddBuddyActivity extends BaseActivity {
             finish();
             return true;
         }
+        if (id == R.id.new_buddy_save) {
+            saveSelectedContacts();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        contactsAdapter.contactItemClicked(i);
     }
 }
