@@ -1,6 +1,7 @@
 package com.creativecapsule.paytracker.UI.Activities;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -61,7 +62,8 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
         }
         if (id == R.id.action_add_buddy) {
             //Add new buddy.
-            showNewBuddyDialog();
+            //showNewBuddyDialog();
+            showNewBuddyActivity();
             return true;
         }
 
@@ -78,6 +80,11 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
                 cancelNewBuddy();
                 break;
         }
+    }
+
+    private void showNewBuddyActivity() {
+        Intent newBuddyIntent = new Intent(this, AddBuddyActivity.class);
+        startActivity(newBuddyIntent);
     }
 
     private void showNewBuddyDialog() {

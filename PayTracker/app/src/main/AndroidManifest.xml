@@ -3,6 +3,7 @@
     package="com.creativecapsule.paytracker" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".Utility.PayTrackerApplication"
@@ -50,6 +51,10 @@
         <activity
             android:name=".UI.Activities.ExpenseListActivity"
             android:label="@string/title_activity_expense_list" >
+        </activity>
+        <activity
+            android:name=".UI.Activities.AddBuddyActivity"
+            android:label="@string/title_activity_add_buddy" >
         </activity>
     </application>
 
