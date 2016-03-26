@@ -13,9 +13,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.creativecapsule.paytracker.Managers.UserAccountManager;
 import com.creativecapsule.paytracker.Models.Misc.ContactItem;
+import com.creativecapsule.paytracker.Models.Person;
 import com.creativecapsule.paytracker.R;
 import com.creativecapsule.paytracker.UI.Adapters.ContactsAdapter;
+import com.creativecapsule.paytracker.Utility.Common;
 
 import java.util.ArrayList;
 
@@ -64,6 +67,7 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
                 ContactItem contact = new ContactItem();
                 contact.setContactName(name);
 
+                boolean hasValidPhoneNumber = false;
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex(
                         ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
                     Cursor pCur = cr.query(
@@ -74,9 +78,16 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
                     while (pCur.moveToNext()) {
                         String phoneNo = pCur.getString(pCur.getColumnIndex(
                                 ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        contact.addContactNumber(phoneNo);
+
+                        phoneNo = Common.trimPhoneNumber(phoneNo);
+                        if (Common.isValidPhoneNumber(phoneNo)) {
+                            contact.addContactNumber(phoneNo);
+                            hasValidPhoneNumber = true;
+                        }
                     }
-                    this.contacts.add(contact);
+                    if (hasValidPhoneNumber) {
+                        this.contacts.add(contact);
+                    }
                     pCur.close();
                 }
             }
@@ -86,9 +97,20 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
     private void saveSelectedContacts() {
         Log.d(DEBUG_TAG, "selected numbers :" + contactsAdapter.getContactsSelected().size());
 
-        //Save the buddies.
-
-        finish();
+        Common.showLoadingDialog(this);
+        ArrayList<Person> newBuddies = new ArrayList<>();
+        for (int i=0 ; i<contactsAdapter.getContactsSelected().size() ; i++) {
+            ContactItem contactItem = contactsAdapter.getContactsSelected().get(i);
+            Person buddy = new Person(contactItem.getContactName(), contactItem.getSelectedContactNumber(), "");
+            newBuddies.add(buddy);
+        }
+        UserAccountManager.getSharedManager().addPersons(newBuddies, new UserAccountManager.UserAccountManagerListener() {
+            @Override
+            public void completed(boolean status) {
+                Common.hideLoadingDialog();
+                finish();
+            }
+        });
     }
 
     @Override
@@ -106,7 +128,7 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
             finish();
             return true;
         }
-        if (id == R.id.new_buddy_save) {
+        if (id == R.id.action_save) {
             saveSelectedContacts();
             return true;
         }

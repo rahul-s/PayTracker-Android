@@ -46,6 +46,14 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        buddies = UserAccountManager.getSharedManager().getBuddies();
+        personsAdapter.setPersons(buddies);
+        personsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_buddies, menu);

@@ -23,6 +23,8 @@ public class UserAccountManager {
     private boolean phoneRegistered;
     private boolean loggedIn;
 
+    private int activeRequestCount;
+
     public static UserAccountManager getSharedManager() {
         return sharedManager;
     }
@@ -78,8 +80,7 @@ public class UserAccountManager {
                     phoneNumber = inputNumber;
                     phoneRegistered = status;
                     callbackListener.completed(true);
-                }
-                else {
+                } else {
                     callbackListener.completed(false);
                 }
             }
@@ -159,7 +160,7 @@ public class UserAccountManager {
     }
 
     public void addPerson(Person person, final UserAccountManagerListener callbackListener) {
-        //PersonRepository.save(managerContext, person);
+        PersonRepository.save(managerContext, person);
         ParseDataManager.getSharedManager().addPerson(person, new ParseDataManager.ParseDataManagerListener() {
             @Override
             public void completed(boolean status, boolean error) {
@@ -167,6 +168,27 @@ public class UserAccountManager {
             }
         });
     }
+
+    public void addPersons(ArrayList<Person> persons, final UserAccountManagerListener callbackListener) {
+        activeRequestCount = persons.size();
+        if (persons.size() == 0) {
+            callbackListener.completed(true);
+        }
+
+        for (int i = 0 ; i<persons.size() ; i++) {
+            //PersonRepository.save(managerContext, persons.get(i));
+            ParseDataManager.getSharedManager().addPerson(persons.get(i), new ParseDataManager.ParseDataManagerListener() {
+                @Override
+                public void completed(boolean status, boolean error) {
+                    activeRequestCount--;
+                    if (activeRequestCount == 0) {
+                        callbackListener.completed(status);
+                    }
+                }
+            });
+        }
+    }
+
     //endregion
 
     public interface UserAccountManagerListener {
