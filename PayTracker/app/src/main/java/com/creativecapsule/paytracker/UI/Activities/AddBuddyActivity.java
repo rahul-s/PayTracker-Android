@@ -24,6 +24,8 @@ import com.creativecapsule.paytracker.UI.Adapters.ContactsAdapter;
 import com.creativecapsule.paytracker.Utility.Common;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItemClickListener {
 
@@ -117,6 +119,14 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
                 }
             }
         }
+
+        //Sort in alphabetical order.
+        Collections.sort(this.contacts, new Comparator<ContactItem>() {
+            @Override
+            public int compare(ContactItem item1, ContactItem item2) {
+                return item1.getContactName().compareToIgnoreCase(item2.getContactName());
+            }
+        });
     }
 
     private void saveSelectedContacts() {

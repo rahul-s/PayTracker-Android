@@ -248,6 +248,7 @@ public class ParseDataManager {
                         //Person found with matching phone.
                         ParseObject parsePerson = list.get(0);
                         person.setParseId(parsePerson.getObjectId());
+                        person.setName(parsePerson.getString(PARSE_KEY_PERSON_NAME));
                         savePerson(person);
                         addBuddyRecord(person, new ParseDataManagerListener() {
                             @Override
