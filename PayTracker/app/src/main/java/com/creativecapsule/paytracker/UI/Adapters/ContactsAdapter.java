@@ -121,6 +121,7 @@ public class ContactsAdapter extends BaseAdapter implements Filterable{
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 contactItemsFiltered = (ArrayList<ContactItem>) filterResults.values;
+                notifyDataSetChanged();
             }
         };
         return contactsFilter;

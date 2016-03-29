@@ -70,6 +70,6 @@
     <string name="label_expense_person_cost">Cost</string>
     <string name="label_expense_person_spent">Spent</string>
     <string name="title_activity_add_buddy">Add Buddy</string>
+    <string name="placeholder_search_contacts">Search contacts</string>
 
-    <string name="hello_world">Hello world!</string>
 </resources>

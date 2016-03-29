@@ -6,11 +6,14 @@ import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.creativecapsule.paytracker.Managers.UserAccountManager;
@@ -39,6 +42,28 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
 
         fetchContacts();
         setupContactsListView();
+        setupSearchFilter();
+    }
+
+    private void setupSearchFilter() {
+        final EditText etContactsFilter = (EditText) findViewById(R.id.contact_search_field);
+        etContactsFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String searchText = etContactsFilter.getText().toString();
+                contactsAdapter.getFilter().filter(searchText.toLowerCase());
+            }
+        });
     }
 
     private void setupContactsListView() {
