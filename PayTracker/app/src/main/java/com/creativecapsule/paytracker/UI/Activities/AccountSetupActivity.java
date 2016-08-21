@@ -25,7 +25,7 @@ public class AccountSetupActivity extends BaseActivity implements View.OnClickLi
         etPassword = (EditText) findViewById(R.id.password_et);
         etRePassword = (EditText) findViewById(R.id.password_confirm_et);
 
-        if (UserAccountManager.getSharedManager().isEmailRegistered()) {
+        if (UserAccountManager.getSharedManager().isPhoneRegistered()) {
             isLoginMode = true;
             etName.setVisibility(View.GONE);
             etRePassword.setVisibility(View.GONE);

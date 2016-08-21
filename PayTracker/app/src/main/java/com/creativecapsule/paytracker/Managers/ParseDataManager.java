@@ -37,6 +37,7 @@ public class ParseDataManager {
 
     public static final String PARSE_TABLE_PERSON = "Person";
     public static final String PARSE_KEY_PERSON_NAME = "name";
+    public static final String PARSE_KEY_PERSON_PHONE_NUMBER = "phone_number";
     public static final String PARSE_KEY_PERSON_EMAIL = "email";
     public static final String PARSE_KEY_PERSON_PASSWORD = "password";
     public static final String PARSE_KEY_PERSON_SIGNED_UP = "signedUp";
@@ -110,23 +111,43 @@ public class ParseDataManager {
         });
     }
 
-    /**
-     * Registers a person with the given details.
-     * The callback will send status true if successfully registered, otherwise false.
-     * @param email
-     * @param password
-     * @param name
-     * @param callbackListener
-     */
-    public void registerPerson(final String email, final String password, final String name, final ParseDataManagerListener callbackListener) {
+    public void isPhoneNumberRegistered(String phoneNumber, final ParseDataManagerListener callbackListener) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_PERSON);
-        query.whereEqualTo(PARSE_KEY_PERSON_EMAIL, email);
+        query.whereEqualTo(PARSE_KEY_PERSON_PHONE_NUMBER, phoneNumber);
+        query.whereEqualTo(PARSE_KEY_PERSON_SIGNED_UP, true);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
                     if (list != null && list.size() > 0) {
-                        //Person found with matching email.
+                        callbackListener.completed(true, false);
+                    } else {
+                        callbackListener.completed(false, false);
+                    }
+                } else {
+                    callbackListener.completed(false, true);
+                }
+            }
+        });
+    }
+
+    /**
+     * Registers a person with the given details.
+     * The callback will send status true if successfully registered, otherwise false.
+     * @param phoneNumber
+     * @param password
+     * @param name
+     * @param callbackListener
+     */
+    public void registerPerson(final String phoneNumber, final String password, final String name, final ParseDataManagerListener callbackListener) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_PERSON);
+        query.whereEqualTo(PARSE_KEY_PERSON_PHONE_NUMBER, phoneNumber);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> list, ParseException e) {
+                if (e == null) {
+                    if (list != null && list.size() > 0) {
+                        //Person found with matching phone.
                         ParseObject person = list.get(0);
                         boolean signedUp = person.getBoolean(PARSE_KEY_PERSON_SIGNED_UP);
                         if (signedUp) {
@@ -137,8 +158,8 @@ public class ParseDataManager {
                             signUpPerson(person, name, password, callbackListener);
                         }
                     } else {
-                        //Email not matching any existing person.
-                        confirmRegister(email, password, name, callbackListener);
+                        //Phone not matching any existing person.
+                        confirmRegister(phoneNumber, password, name, callbackListener);
                     }
                 } else {
                     callbackListener.completed(false, true);
@@ -148,8 +169,8 @@ public class ParseDataManager {
     }
 
     // This method creates an entry in the parse with given details. Invoke this when user is not registered.
-    private void confirmRegister(String email, String password, String name, final ParseDataManagerListener callbackListener) {
-        final Person person = new Person(name, email, "");
+    private void confirmRegister(String phoneNumber, String password, String name, final ParseDataManagerListener callbackListener) {
+        final Person person = new Person(name, phoneNumber, password);
         final ParseObject parseObject = getParseObject(person);
         parseObject.put(PARSE_KEY_PERSON_PASSWORD, password);
         parseObject.put(PARSE_KEY_PERSON_SIGNED_UP, true);
@@ -167,7 +188,7 @@ public class ParseDataManager {
         });
     }
 
-    // This method signs up an existing user. Invoke this method when email exists but nut signed up.
+    // This method signs up an existing user. Invoke this method when phone exists but nut signed up.
     private void signUpPerson(final ParseObject parsePerson, String name, String password, final ParseDataManagerListener callbackListener) {
         parsePerson.put(PARSE_KEY_PERSON_PASSWORD, password);
         parsePerson.put(PARSE_KEY_PERSON_SIGNED_UP, true);
@@ -186,22 +207,22 @@ public class ParseDataManager {
     }
 
     /**
-     * Validates the email and password.
+     * Validates the phone and password.
      * The callback will send status true if successfully validated, false otherwise.
-     * @param email
+     * @param phoneNumber
      * @param password
      * @param callbackListener
      */
-    public void loginPerson(String email, String password, final ParseDataManagerListener callbackListener) {
+    public void loginPerson(String phoneNumber, String password, final ParseDataManagerListener callbackListener) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_PERSON);
-        query.whereEqualTo(PARSE_KEY_PERSON_EMAIL, email);
+        query.whereEqualTo(PARSE_KEY_PERSON_PHONE_NUMBER, phoneNumber);
         query.whereEqualTo(PARSE_KEY_PERSON_PASSWORD, password);
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
                     if (list != null && list.size() > 0) {
-                        //Person found with matching email.
+                        //Person found with matching phone.
                         ParseObject parsePerson = list.get(0);
                         Person person = getPerson(parsePerson);
                         savePerson(person);
@@ -218,15 +239,16 @@ public class ParseDataManager {
 
     public void addPerson(final Person person, final ParseDataManagerListener callbackListener) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery(PARSE_TABLE_PERSON);
-        query.whereEqualTo(PARSE_KEY_PERSON_EMAIL, person.getEmail());
+        query.whereEqualTo(PARSE_KEY_PERSON_PHONE_NUMBER, person.getPhoneNumber());
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> list, ParseException e) {
                 if (e == null) {
                     if (list != null && list.size() > 0) {
-                        //Person found with matching email.
+                        //Person found with matching phone.
                         ParseObject parsePerson = list.get(0);
                         person.setParseId(parsePerson.getObjectId());
+                        person.setName(parsePerson.getString(PARSE_KEY_PERSON_NAME));
                         savePerson(person);
                         addBuddyRecord(person, new ParseDataManagerListener() {
                             @Override
@@ -235,8 +257,8 @@ public class ParseDataManager {
                             }
                         });
                     } else {
-                        //Email not matching any existing person.
-                        confirmAddPerson(person.getEmail(), person.getName(), callbackListener);
+                        //Phone not matching any existing person.
+                        confirmAddPerson(person.getPhoneNumber(), person.getName(), callbackListener);
                     }
                 } else {
                     callbackListener.completed(false, true);
@@ -245,8 +267,8 @@ public class ParseDataManager {
         });
     }
 
-    private void confirmAddPerson(String email, String name, final ParseDataManagerListener callbackListener) {
-        final Person person = new Person(name, email, "");
+    private void confirmAddPerson(String phoneNumber, String name, final ParseDataManagerListener callbackListener) {
+        final Person person = new Person(name, phoneNumber, "");
         final ParseObject parseObject = getParseObject(person);
         parseObject.saveInBackground(new SaveCallback() {
             @Override
@@ -285,7 +307,7 @@ public class ParseDataManager {
                         if (list != null && list.size() > 0) {
                             callbackListener.completed(false, false);
                         } else {
-                            //Email not matching any existing person.
+                            //Phone not matching any existing person.
                             confirmAddBuddy(buddy, new ParseDataManagerListener() {
                                 @Override
                                 public void completed(boolean status, boolean error) {
@@ -455,7 +477,7 @@ public class ParseDataManager {
      */
     public ParseObject getParseObject(Person person) {
         ParseObject parseObject = new ParseObject(ParseDataManager.PARSE_TABLE_PERSON);
-        parseObject.put(ParseDataManager.PARSE_KEY_PERSON_EMAIL, person.getEmail());
+        parseObject.put(ParseDataManager.PARSE_KEY_PERSON_PHONE_NUMBER, person.getPhoneNumber());
         parseObject.put(ParseDataManager.PARSE_KEY_PERSON_NAME, person.getName());
         try {
             if (person.getParseId() != null && !person.getParseId().equals("")) {
@@ -532,8 +554,10 @@ public class ParseDataManager {
             }
             String name = parseObject.getString(PARSE_KEY_PERSON_NAME);
             String email = parseObject.getString(PARSE_KEY_PERSON_EMAIL);
+            String phoneNumber = parseObject.getString(PARSE_KEY_PERSON_PHONE_NUMBER);
             person.setName(name);
             person.setEmail(email);
+            person.setPhoneNumber(phoneNumber);
             person.setParseId(parseObject.getObjectId());
             return person;
         }

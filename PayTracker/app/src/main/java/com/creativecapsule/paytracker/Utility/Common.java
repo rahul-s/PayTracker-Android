@@ -213,6 +213,23 @@ public class Common {
         return Patterns.EMAIL_ADDRESS.matcher(emailId).matches();
     }
 
+    public static String trimPhoneNumber(String number) {
+        number = number.replaceAll("[\\D]", "");
+        if (number.length()>10) {
+            number = number.substring(number.length()-10,number.length());
+        }
+        return number;
+    }
+
+    public static boolean isValidPhoneNumber(String number) {
+        if (number != null && number.length() == 10) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     /*
     *Validate a password
     *@return password valid boolean

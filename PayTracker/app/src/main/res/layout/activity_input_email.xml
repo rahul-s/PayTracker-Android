@@ -6,11 +6,20 @@
     tools:context="com.creativecapsule.paytracker.UI.Activities.InputEmailActivity">
 
     <EditText
+        android:id="@+id/phone_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/global_margin_20"
+        android:inputType="numberDecimal"
+        android:hint="@string/phoneNumber"/>
+
+    <EditText
         android:id="@+id/email_et"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/global_margin_20"
         android:inputType="textEmailAddress"
+        android:visibility="gone"
         android:hint="@string/email"/>
 
     <Button

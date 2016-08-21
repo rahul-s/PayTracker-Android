@@ -7,19 +7,21 @@ import com.creativecapsule.paytracker.Models.Common.BaseModel;
  */
 public class Person extends BaseModel {
 
+    private String phoneNumber;
     private String email;
     private String name;
     private String nickName;
 
     public Person() {
+        this.phoneNumber = "";
         this.name = "";
         this.email = "";
         this.nickName = "";
     }
 
-    public Person(String name, String email, String nickName) {
+    public Person(String name, String phone_number, String nickName) {
         this.name = name;
-        this.email = email;
+        this.phoneNumber = phone_number;
         this.nickName = nickName;
     }
 
@@ -45,5 +47,13 @@ public class Person extends BaseModel {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

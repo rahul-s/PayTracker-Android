@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_title_select_number"
+        android:textSize="@dimen/dialog_title_size"
+        android:textColor="@color/text_color_dark"/>
+    <ListView
+        android:id="@+id/contact_number_select_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never"/>
+    <Button
+        android:id="@+id/contact_number_save"
+        android:layout_width="@dimen/dialog_input_width"
+        android:layout_height="wrap_content"
+        android:background="@color/button_bg_color"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_margin="@dimen/list_item_internal_margin_small"
+        android:text="@string/label_save"
+        android:textColor="@color/button_text_color"/>
+    <Button
+        android:id="@+id/contact_number_cancel"
+        android:layout_width="@dimen/dialog_input_width"
+        android:layout_height="wrap_content"
+        android:background="@color/button_bg_color"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_margin="@dimen/list_item_internal_margin_small"
+        android:text="@string/label_cancel"
+        android:textColor="@color/button_text_color"/>
+</LinearLayout>

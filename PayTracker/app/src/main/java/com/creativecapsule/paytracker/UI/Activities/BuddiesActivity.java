@@ -1,6 +1,7 @@
 package com.creativecapsule.paytracker.UI.Activities;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -45,6 +46,14 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        buddies = UserAccountManager.getSharedManager().getBuddies();
+        personsAdapter.setPersons(buddies);
+        personsAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_buddies, menu);
@@ -61,7 +70,8 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
         }
         if (id == R.id.action_add_buddy) {
             //Add new buddy.
-            showNewBuddyDialog();
+            //showNewBuddyDialog();
+            showNewBuddyActivity();
             return true;
         }
 
@@ -78,6 +88,11 @@ public class BuddiesActivity extends BaseActivity implements View.OnClickListene
                 cancelNewBuddy();
                 break;
         }
+    }
+
+    private void showNewBuddyActivity() {
+        Intent newBuddyIntent = new Intent(this, AddBuddyActivity.class);
+        startActivity(newBuddyIntent);
     }
 
     private void showNewBuddyDialog() {
