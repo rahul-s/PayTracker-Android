@@ -1,7 +1,10 @@
 package com.creativecapsule.paytracker.UI.Activities;
 
+import android.Manifest;
 import android.content.ContentResolver;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -15,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.creativecapsule.paytracker.Managers.UserAccountManager;
 import com.creativecapsule.paytracker.Models.Misc.ContactItem;
@@ -34,6 +38,8 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
     private ArrayList<ContactItem> contacts;
     private ContactsAdapter contactsAdapter;
 
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +51,19 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
         fetchContacts();
         setupContactsListView();
         setupSearchFilter();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_REQUEST_READ_CONTACTS) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                fetchContacts();
+            } else {
+                Toast.makeText(this, "We cannot add buddies until you grant permission.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void setupSearchFilter() {
@@ -78,6 +97,11 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
     }
 
     private void fetchContacts() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+            //After this point you wait for callback in onRequestPermissionsResult(int, String[], int[]) overriden method
+            return;
+        }
         ContentResolver cr = getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);

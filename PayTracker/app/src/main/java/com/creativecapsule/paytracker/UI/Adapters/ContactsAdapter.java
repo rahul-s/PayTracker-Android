@@ -30,6 +30,9 @@ public class ContactsAdapter extends BaseAdapter implements Filterable{
     private ListView numbersSelectListView;
 
     public ContactsAdapter(ArrayList<ContactItem> contactItems, Context context) {
+        if (contactItems == null) {
+            contactItems = new ArrayList<ContactItem>();
+        }
         this.contactItemsAll = contactItems;
         this.contactItemsFiltered = contactItems;
         this.contactsSelected = new ArrayList<ContactItem>();
