@@ -38,7 +38,7 @@ public class OutingRepository extends BaseRepository {
     }
 
     public static ArrayList<Outing> getOutings(Context context) {
-        ArrayList<Outing> outings = new ArrayList<>();
+        ArrayList<Outing> outings = new ArrayList<Outing>();
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         List<Object> outingObjects = sqLiteImplementation.getObjectsFromClass(Outing.class);
         for (int i = 0; i < outingObjects.size(); i++) {

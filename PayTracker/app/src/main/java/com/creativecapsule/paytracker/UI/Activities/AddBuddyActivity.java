@@ -82,7 +82,7 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
 
-        this.contacts = new ArrayList<>();
+        this.contacts = new ArrayList<ContactItem>();
 
         if (cur.getCount() > 0) {
             while (cur.moveToNext()) {
@@ -133,7 +133,7 @@ public class AddBuddyActivity extends BaseActivity implements AdapterView.OnItem
         Log.d(DEBUG_TAG, "selected numbers :" + contactsAdapter.getContactsSelected().size());
 
         Common.showLoadingDialog(this);
-        ArrayList<Person> newBuddies = new ArrayList<>();
+        ArrayList<Person> newBuddies = new ArrayList<Person>();
         for (int i=0 ; i<contactsAdapter.getContactsSelected().size() ; i++) {
             ContactItem contactItem = contactsAdapter.getContactsSelected().get(i);
             Person buddy = new Person(contactItem.getContactName(), contactItem.getSelectedContactNumber(), "");

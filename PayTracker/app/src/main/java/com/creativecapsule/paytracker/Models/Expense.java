@@ -45,7 +45,7 @@ public class Expense extends BaseModel {
 
     public void addExpenseFor(Person expenseFor) {
         if (this.expenseFor == null) {
-            this.expenseFor = new ArrayList<>();
+            this.expenseFor = new ArrayList<Person>();
         }
         this.expenseFor.add(expenseFor);
     }

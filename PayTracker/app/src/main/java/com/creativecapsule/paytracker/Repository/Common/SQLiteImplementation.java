@@ -428,7 +428,7 @@ public class SQLiteImplementation extends SQLiteOpenHelper implements DatabasePr
                         //Log.d(DEBUG_TAG, "List of type:" + listItemClass);
                         if (BaseModel.class.isAssignableFrom(listItemClass)) {
                             //is a one to many relation. items needs to be fetched from another table using the identifier and added to arraylist.
-                            ArrayList<BaseModel> valueList = new ArrayList<>();
+                            ArrayList<BaseModel> valueList = new ArrayList<BaseModel>();
                             String[] arr = null;
                             if(cursor.getString(index) != null && !cursor.getString(index).equals("")) {
                                 arr = cursor.getString(index).split(STRING_ARRAY_SEPERATOR);
@@ -489,22 +489,22 @@ public class SQLiteImplementation extends SQLiteOpenHelper implements DatabasePr
             contentValues.put(columnName, String.valueOf(columnValue));
         } else if (fieldClass.equals(int.class)) {
             if (columnValue == null) return;
-            contentValues.put(columnName, (int) columnValue);
+            contentValues.put(columnName,(Integer) columnValue);
         } else if (fieldClass.equals(Integer.class)) {
             if (columnValue == null) return;
-            contentValues.put(columnName, (int) columnValue);
+            contentValues.put(columnName, (Integer) columnValue);
         } else if (fieldClass.equals(Double.class)) {
             if (columnValue == null) return;
-            contentValues.put(columnName, (double) columnValue);
+            contentValues.put(columnName, (Double) columnValue);
         } else if (fieldClass.equals(float.class)) {
             if (columnValue == null) return;
-            contentValues.put(columnName, (float) columnValue);
+            contentValues.put(columnName, (Float) columnValue);
         } else if (fieldClass.equals(long.class)) {
             if (columnValue == null) return;
-            contentValues.put(columnName, (long) columnValue);
+            contentValues.put(columnName, (Long) columnValue);
         } else if (fieldClass.equals(double.class)) {
             if (columnValue == null) return;
-            contentValues.put(columnName, (double) columnValue);
+            contentValues.put(columnName, (Double) columnValue);
         } else if (fieldClass.equals(byte[].class)) {
             if (columnValue == null) return;
             contentValues.put(columnName, (byte[]) columnValue);
@@ -514,7 +514,7 @@ public class SQLiteImplementation extends SQLiteOpenHelper implements DatabasePr
             contentValues.put(columnName, ((Date)columnValue).getTime());
         } else if (fieldClass.equals(boolean.class)) {
             if (columnValue == null) return;
-            contentValues.put(columnName, (boolean) columnValue);
+            contentValues.put(columnName, Boolean.valueOf(String.valueOf(columnValue)));
         } else if(fieldClass.equals(String[].class)) {
             String str = "";
             if(columnValue != null) {

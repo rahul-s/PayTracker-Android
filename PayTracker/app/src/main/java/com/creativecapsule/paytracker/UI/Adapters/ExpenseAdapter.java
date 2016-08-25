@@ -24,7 +24,7 @@ public class ExpenseAdapter extends BaseAdapter {
 
     public ExpenseAdapter(Context context) {
         this.context = context;
-        this.expenses = new ArrayList<>();
+        this.expenses = new ArrayList<Expense>();
     }
 
     public void setExpenses(ArrayList<Expense> expenses) {

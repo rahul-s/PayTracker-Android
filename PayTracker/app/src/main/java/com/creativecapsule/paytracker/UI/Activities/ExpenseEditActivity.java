@@ -161,7 +161,7 @@ public class ExpenseEditActivity extends BaseActivity implements AdapterView.OnI
         this.newExpense.setNote(comments);
 
         // for
-        ArrayList<Person> selectedPeople = new ArrayList<>();
+        ArrayList<Person> selectedPeople = new ArrayList<Person>();
         for (int i=0 ; i<this.outing.getPersons().size() ; i++) {
             if (forBuddiesLV.getCheckedItemPositions().get(i)) {
                 selectedPeople.add(this.outing.getPersons().get(i));

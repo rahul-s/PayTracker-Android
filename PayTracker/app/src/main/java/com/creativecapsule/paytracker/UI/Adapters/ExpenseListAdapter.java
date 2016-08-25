@@ -91,7 +91,7 @@ public class ExpenseListAdapter extends BaseAdapter {
     }
 
     private void setupExpenseItems() {
-        this.expenseItems = new ArrayList<>();
+        this.expenseItems = new ArrayList<ExpenseItem>();
         ArrayList<Expense> outingExpenses = ExpenseManager.getSharedInstance().getExpenses(this.outing);
         for (Person person : outing.getPersons()) {
             ExpenseItem item = new ExpenseItem(person);

@@ -60,7 +60,7 @@ public class DownloadDataTask extends AsyncTask <Void, Integer, Void> {
                 outingPersonQuery.whereEqualTo(ParseDataManager.PARSE_KEY_OUTING_PERSON_OUTING, parseOutingObject);
                 outingPersonQuery.include(ParseDataManager.PARSE_KEY_OUTING_PERSON_PERSON);
                 List<ParseObject> parseOutingPersons = outingPersonQuery.find();
-                ArrayList<ParseObject> parseOutingPersonObjects = new ArrayList<>();
+                ArrayList<ParseObject> parseOutingPersonObjects = new ArrayList<ParseObject>();
                 for (ParseObject parseOutingPerson : parseOutingPersons) {
                     ParseObject parseOutingPersonObj = parseOutingPerson.getParseObject(ParseDataManager.PARSE_KEY_OUTING_PERSON_PERSON);
                     parseOutingPersonObjects.add(parseOutingPersonObj);
@@ -86,7 +86,7 @@ public class DownloadDataTask extends AsyncTask <Void, Integer, Void> {
                     expensePersonQuery.whereEqualTo(ParseDataManager.PARSE_KEY_EXPENSE_PERSON_EXPENSE, parseExpense);
                     expensePersonQuery.include(ParseDataManager.PARSE_KEY_EXPENSE_PERSON_PERSON);
                     List<ParseObject> parseExpensePersons = expensePersonQuery.find();
-                    ArrayList<ParseObject> parseExpensePersonObjects = new ArrayList<>();
+                    ArrayList<ParseObject> parseExpensePersonObjects = new ArrayList<ParseObject>();
                     for (ParseObject parseExpensePerson : parseExpensePersons) {
                         ParseObject parseExpensePersonObject = parseExpensePerson.getParseObject(ParseDataManager.PARSE_KEY_EXPENSE_PERSON_PERSON);
                         parseExpensePersonObjects.add(parseExpensePersonObject);

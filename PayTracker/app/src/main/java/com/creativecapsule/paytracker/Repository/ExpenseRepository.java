@@ -46,7 +46,7 @@ public class ExpenseRepository extends BaseRepository {
     }
 
     public static ArrayList<Expense> getExpenses(Context context, Outing outing) {
-        ArrayList<Expense> expenses = new ArrayList<>();
+        ArrayList<Expense> expenses = new ArrayList<Expense>();
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         List<String> clauses = new ArrayList<String>();
         String clause = COLUMN_KEY_OUTING + "=" + "'" + outing.getIdentifier() + "'";
@@ -59,7 +59,7 @@ public class ExpenseRepository extends BaseRepository {
     }
 
     public static Expense getExpenseByParseId(Context context, String parseId) {
-        ArrayList<Expense> expenses = new ArrayList<>();
+        ArrayList<Expense> expenses = new ArrayList<Expense>();
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         List<String> clauses = new ArrayList<String>();
         String clause = KEY_PARSE_ID + "=" + "'" + parseId + "'";

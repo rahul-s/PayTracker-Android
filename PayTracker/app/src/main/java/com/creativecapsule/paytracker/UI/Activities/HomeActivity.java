@@ -189,7 +189,7 @@ public class HomeActivity extends BaseActivity implements AdapterView.OnItemClic
     }
 
     private void newOutingStep2Completed() {
-        ArrayList<Person> selectedPeople = new ArrayList<>();
+        ArrayList<Person> selectedPeople = new ArrayList<Person>();
         ListView buddiesListView = (ListView) newOutingDialog2View.findViewById(R.id.people_select_list);
         for (int i=0 ; i<this.buddies.size() ; i++) {
             if (buddiesListView.getCheckedItemPositions().get(i)) {

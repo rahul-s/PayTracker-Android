@@ -132,7 +132,7 @@ public class OutStandingsAdapter extends SectionHeaderBaseAdapter {
 
         public OutStanding(Person person) {
             this.person = person;
-            outstandingPayments = new ArrayList<>();
+            outstandingPayments = new ArrayList<Pay>();
         }
 
         public void addPayment(Pay payment) {
@@ -179,7 +179,7 @@ public class OutStandingsAdapter extends SectionHeaderBaseAdapter {
     }
 
     private void setupOutStandings() {
-        this.outStandings = new ArrayList<>();
+        this.outStandings = new ArrayList<OutStanding>();
         ArrayList<Expense> outingExpenses = ExpenseManager.getSharedInstance().getExpenses(this.outing);
         for (Person person : this.outing.getPersons()) {
             OutStanding outStanding = new OutStanding(person);

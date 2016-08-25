@@ -573,7 +573,7 @@ public class ParseDataManager {
                 outing = new Outing();
             }
             String title = parseOuting.getString(PARSE_KEY_OUTING_NAME);
-            ArrayList<Person> outingBuddies = new ArrayList<>();
+            ArrayList<Person> outingBuddies = new ArrayList<Person>();
             for (ParseObject parseOutingBuddy : parseOutingBuddies) {
                 Person outingBuddy = getPerson(parseOutingBuddy);
                 outingBuddies.add(outingBuddy);
@@ -597,7 +597,7 @@ public class ParseDataManager {
             ParseObject parseExpenseBy = parseExpense.getParseObject(PARSE_KEY_EXPENSE_EXPENSE_BY);
             Person expenseBy = getPerson(parseExpenseBy);
             expense.setExpenseBy(expenseBy);
-            ArrayList<Person> expenseFor = new ArrayList<>();
+            ArrayList<Person> expenseFor = new ArrayList<Person>();
             for (ParseObject parseExpenseFor : parseExpensePersons) {
                 Person expensePerson = getPerson(parseExpenseFor);
                 expenseFor.add(expensePerson);

@@ -22,7 +22,7 @@ public class PersonsAdapter extends BaseAdapter {
 
     public PersonsAdapter(Context context) {
         this.context = context;
-        this.persons = new ArrayList<>();
+        this.persons = new ArrayList<Person>();
     }
 
     public void setPersons(ArrayList<Person> persons) {

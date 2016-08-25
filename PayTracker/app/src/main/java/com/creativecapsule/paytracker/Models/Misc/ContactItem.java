@@ -12,7 +12,7 @@ public class ContactItem {
 
     public ContactItem() {
         this.contactName = "";
-        this.contactNumbers = new ArrayList<>();
+        this.contactNumbers = new ArrayList<String>();
         this.selectedContactNumber = null;
     }
 

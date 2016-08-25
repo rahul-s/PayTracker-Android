@@ -22,7 +22,7 @@ public class OutingsAdapter extends BaseAdapter{
 
     public OutingsAdapter(Context context) {
         this.context = context;
-        this.outings = new ArrayList<>();
+        this.outings = new ArrayList<Outing>();
     }
 
     public void setOutings(ArrayList<Outing> outings) {

@@ -13,7 +13,7 @@ public class Outing extends BaseModel {
 
     public Outing() {
         this.title = "";
-        this.persons = new ArrayList<>();
+        this.persons = new ArrayList<Person>();
     }
 
     public Outing(String title, ArrayList<Person> persons) {
@@ -39,7 +39,7 @@ public class Outing extends BaseModel {
 
     public void addPersons(ArrayList<Person> persons) {
         if (this.persons == null) {
-            this.persons = new ArrayList<>();
+            this.persons = new ArrayList<Person>();
         }
         this.persons.addAll(persons);
     }

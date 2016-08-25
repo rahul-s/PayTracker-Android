@@ -44,7 +44,7 @@ public class PersonRepository extends BaseRepository {
     }
 
     public static ArrayList<Person> getPersons(Context context) {
-        ArrayList<Person> persons = new ArrayList<>();
+        ArrayList<Person> persons = new ArrayList<Person>();
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         List<Object> personObjects = sqLiteImplementation.getObjectsFromClass(Person.class);
         for (int i = 0; i < personObjects.size(); i++) {
@@ -55,7 +55,7 @@ public class PersonRepository extends BaseRepository {
 
     //TODO: change this to fetch from the Outings table
     public static Person getPerson(Context context, String phoneNumber) {
-        ArrayList<Person> persons = new ArrayList<>();
+        ArrayList<Person> persons = new ArrayList<Person>();
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         List<String> clauses = new ArrayList<String>();
         String clause = COLUMN_KEY_PHONE_NUMBER + "=" + "'" + phoneNumber + "'";
@@ -68,7 +68,7 @@ public class PersonRepository extends BaseRepository {
     }
 
     public static Person getPersonByParseId(Context context, String parseId) {
-        ArrayList<Person> persons = new ArrayList<>();
+        ArrayList<Person> persons = new ArrayList<Person>();
         SQLiteImplementation sqLiteImplementation = new SQLiteImplementation(context, DATABASE_NAME, DATABASE_VERSION);
         List<String> clauses = new ArrayList<String>();
         String clause = KEY_PARSE_ID + "=" + "'" + parseId + "'";

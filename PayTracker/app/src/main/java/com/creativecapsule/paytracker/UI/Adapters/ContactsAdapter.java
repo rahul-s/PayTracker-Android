@@ -32,7 +32,7 @@ public class ContactsAdapter extends BaseAdapter implements Filterable{
     public ContactsAdapter(ArrayList<ContactItem> contactItems, Context context) {
         this.contactItemsAll = contactItems;
         this.contactItemsFiltered = contactItems;
-        this.contactsSelected = new ArrayList<>();
+        this.contactsSelected = new ArrayList<ContactItem>();
         this.context = context;
     }
 

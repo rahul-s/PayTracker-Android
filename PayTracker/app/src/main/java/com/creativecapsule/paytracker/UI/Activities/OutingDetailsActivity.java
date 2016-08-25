@@ -221,8 +221,8 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
     }
 
     private void initOtherBuddies() {
-        otherBuddies = new ArrayList<>();
-        shareBuddies = new ArrayList<>();
+        otherBuddies = new ArrayList<Person>();
+        shareBuddies = new ArrayList<Person>();
         Person mySelf = UserAccountManager.getSharedManager().getLoggedInPerson();
         ArrayList<Person> allBuddies = UserAccountManager.getSharedManager().getPersons();
         for (Person buddy : allBuddies) {
@@ -274,7 +274,7 @@ public class OutingDetailsActivity extends BaseActivity implements View.OnClickL
     }
 
     private void addBuddySave() {
-        ArrayList<Person> selectedPeople = new ArrayList<>();
+        ArrayList<Person> selectedPeople = new ArrayList<Person>();
         ListView buddiesListView = (ListView) addBuddiesDialogView.findViewById(R.id.people_select_list);
         for (int i=0 ; i<this.otherBuddies.size() ; i++) {
             if (buddiesListView.getCheckedItemPositions().get(i)) {
